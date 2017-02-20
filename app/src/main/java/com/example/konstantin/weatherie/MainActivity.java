@@ -783,39 +783,6 @@ String weekDay ="";
                 JSONObject temp = listItem.getJSONObject("temp");
                 weather.setTemperature(temp.getString("day"));
 
-//                weather.setTemperature(main.getString("temp"));
-//                weather.setDescription(listItem.optJSONArray("weather").getJSONObject(0).getString("description"));
-//                JSONObject windObj = listItem.optJSONObject("wind");
-//                if (windObj != null) {
-//                    weather.setWind(windObj.getString("speed"));
-//                    weather.setWindDirectionDegree(windObj.getDouble("deg"));
-//                }
-//                weather.setPressure(main.getString("pressure"));
-//                weather.setHumidity(main.getString("humidity"));
-//
-//                JSONObject rainObj = listItem.optJSONObject("rain");
-//                String rain = "";
-//                if (rainObj != null) {
-//                    rain = getRainString(rainObj);
-//                } else {
-//                    JSONObject snowObj = listItem.optJSONObject("snow");
-//                    if (snowObj != null) {
-//                        rain = getRainString(snowObj);
-//                    } else {
-//                        rain = "0";
-//                    }
-//                }
-//                weather.setRain(rain);
-//
-//                final String idString = listItem.optJSONArray("weather").getJSONObject(0).getString("id");
-//                weather.setId(idString);
-//
-//                final String dateMsString = listItem.getString("dt") + "000";
-//                Calendar cal = Calendar.getInstance();
-//                cal.setTimeInMillis(Long.parseLong(dateMsString));
-//                weather.setIcon(setWeatherIcon(Integer.parseInt(idString), cal.get(Calendar.HOUR_OF_DAY)));
-
-
                     fiveDaysForecastWeather.add(weather);
 
             }
@@ -848,7 +815,6 @@ String weekDay ="";
 
             longTermWeather = new ArrayList<>();
             longTermTodayWeather = new ArrayList<>();
-            longTermTomorrowWeather = new ArrayList<>();
 
             JSONArray list = reader.getJSONArray("list");
             for (i = 0; i < list.length(); i++) {
@@ -896,8 +862,7 @@ String weekDay ="";
                 //today.set(Calendar.DAY_OF_YEAR, 1);
                 if (cal.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
                     longTermTodayWeather.add(weather);
-                } else if (cal.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR) + 1) {
-                    longTermTomorrowWeather.add(weather);
+
                 } else {
                     longTermWeather.add(weather);
                 }
@@ -939,21 +904,7 @@ String weekDay ="";
         RecyclerViewFragment recyclerViewFragmentToday = new RecyclerViewFragment();
         recyclerViewFragmentToday.setArguments(bundleToday);
         viewPagerAdapter.addFragment(recyclerViewFragmentToday, getString(R.string.today));
-
-//        Bundle bundleTomorrow = new Bundle();
-//        bundleTomorrow.putInt("day", 1);
-//        RecyclerViewFragment recyclerViewFragmentTomorrow = new RecyclerViewFragment();
-//        recyclerViewFragmentTomorrow.setArguments(bundleTomorrow);
-//        viewPagerAdapter.addFragment(recyclerViewFragmentTomorrow, getString(R.string.tomorrow));
-//
-//        Bundle bundle = new Bundle();
-//        bundle.putInt("day", 2);
-//        RecyclerViewFragment recyclerViewFragment = new RecyclerViewFragment();
-//        recyclerViewFragment.setArguments(bundle);
-//        viewPagerAdapter.addFragment(recyclerViewFragment, getString(R.string.later));
-
         int currentPage = viewPager.getCurrentItem();
-
         viewPagerAdapter.notifyDataSetChanged();
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
