@@ -883,7 +883,7 @@ String weekDay ="";
         WeatherRecyclerAdapter weatherRecyclerAdapter;
 
             weatherRecyclerAdapter = new WeatherRecyclerAdapter(this, longTermTodayWeather);
-        
+
         return weatherRecyclerAdapter;
     }
 
@@ -899,7 +899,7 @@ String weekDay ="";
         bundleToday.putInt("day", 0);
         RecyclerViewFragment recyclerViewFragmentToday = new RecyclerViewFragment();
         recyclerViewFragmentToday.setArguments(bundleToday);
-        viewPagerAdapter.addFragment(recyclerViewFragmentToday, getString(R.string.today));
+        viewPagerAdapter.addFragment(recyclerViewFragmentToday, " Today 3h Forecast " );
         int currentPage = viewPager.getCurrentItem();
         viewPagerAdapter.notifyDataSetChanged();
         viewPager.setAdapter(viewPagerAdapter);
