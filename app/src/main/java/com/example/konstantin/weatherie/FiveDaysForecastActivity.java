@@ -1,8 +1,10 @@
 package com.example.konstantin.weatherie;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -11,8 +13,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
 
 import com.example.konstantin.weatherie.adapters.RecyclerViewFiveDaysFragment;
 import com.example.konstantin.weatherie.adapters.RecyclerViewFragment;
@@ -24,6 +30,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class FiveDaysForecastActivity extends AppCompatActivity {
 
@@ -35,6 +42,9 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
     SimpleAdapter adapter;
     ViewPager viewPager;
     TabLayout tabLayout;
+    String image;
+    //Typeface weatherFont;
+    TextView icon;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,8 +58,11 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
 
 
+
         longTermWeather = (ArrayList<Weather>) getIntent().getSerializableExtra("forecastDetailed");
         fiveDaysWeather = (ArrayList<Weather>) getIntent().getSerializableExtra("forecastFiveDays");
+        //weatherFont = Typeface.createFromAsset(this.getAssets(), "fonts/weather.ttf");
+
         //progressDialog = new ProgressDialog(FiveDaysForecastActivity.this);
         //preloadWeather();
        // updateLastUpdateTime();
@@ -66,8 +79,10 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
                 new ArrayList<HashMap<String, String>>();
         for (Weather item : fiveDaysWeather) {
             HashMap<String, String> map = new HashMap<String, String>();
-            //Date
-            map.put("day", item.getDate().toString());
+            //Day of the week
+            map.put("day", item.getWeekday());
+            // conditions description
+            map.put("description", item.getDescription());
             // Temperature
             float temperature = MesurmentsConvertor.convertTemperature(Float.parseFloat(item.getTemperature()), sp);
             if (sp.getBoolean("temperatureInteger", false)) {
@@ -79,22 +94,57 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
             } else {
                 map.put("temp", String.valueOf(new DecimalFormat("#.#").format(temperature) + " °" + sp.getString("unit", "C")));
             }
+            map.put("icon",getImage(item.getIcon()));
+            //map.put("icon", item.getIcon());
+            image = item.getIcon();
 
             data.add(map);
         }
 
         // create the resource, from, and to variables
         int resource = R.layout.five_days_row;
-        String[] from = {"day","temp"};
-        int[] to = {R.id.dayOfWeek,R.id.temperature};
+        String[] from = {"day","description","temp", "icon"};
+        int[] to = {R.id.dayOfWeek,R.id.description,R.id.temperature, R.id.viewIcon};
 
         fiveDaysListView.setBackgroundColor(0);
         // create and set the adapter
         adapter =
-                new SimpleAdapter(this, data, resource, from, to);
+                new TypefacedSimpleAdapter(this, data, resource,from,to);
+//new String[]{"day","description","icon","temp"},
+       //new int[] {R.id.dayOfWeek,R.id.description,R.id.viewIcon, R.id.temperature}
         fiveDaysListView.setAdapter(adapter);
 
     }
+
+    private String getImage (String icon){
+
+        if (icon.contains("10d")) {
+            return String.valueOf(R.drawable.medium_rain);
+        }
+        return String.valueOf(R.drawable.ic_cloud_black_18dp);
+    }
+
+    private class TypefacedSimpleAdapter extends SimpleAdapter {
+        //private final Typeface mTypeface;
+
+        public TypefacedSimpleAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
+            super(context, data, resource, from, to);
+            //mTypeface = Typeface.createFromAsset(context.getAssets(),"fonts/weather.ttf");
+        }
+
+        @Override public View getView(int position, View convertView, ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            LinearLayout ll = (LinearLayout) view; // get the parent layout view
+            //TextView icon = (TextView) ll.findViewById(R.id.icon);
+            //icon.setTypeface(mTypeface);
+            //ImageView viewIcon = (ImageView)ll.findViewById(R.id.viewIcon);
+
+            //viewIcon.setImageResource(R.drawable.medium_rain);
+            return ll;
+        }
+    }
+
+
 
     public WeatherRecyclerAdapter getAdapter(int id) {
         WeatherRecyclerAdapter weatherRecyclerAdapter;
@@ -116,18 +166,6 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
         recyclerViewFiveDaysFragment.setArguments(fiveDaysForecast);
         viewPagerAdapter.addFragment(recyclerViewFiveDaysFragment, getString(R.string.five_days_forecast));
 
-//        Bundle bundleTomorrow = new Bundle();
-//        bundleTomorrow.putInt("day", 1);
-//        RecyclerViewFragment recyclerViewFragmentTomorrow = new RecyclerViewFragment();
-//        recyclerViewFragmentTomorrow.setArguments(bundleTomorrow);
-//        viewPagerAdapter.addFragment(recyclerViewFragmentTomorrow, getString(R.string.tomorrow));
-//
-//        Bundle bundle = new Bundle();
-//        bundle.putInt("day", 2);
-//        RecyclerViewFragment recyclerViewFragment = new RecyclerViewFragment();
-//        recyclerViewFragment.setArguments(bundle);
-//        viewPagerAdapter.addFragment(recyclerViewFragment, getString(R.string.later));
-
         int currentPage = viewPager.getCurrentItem();
 
         viewPagerAdapter.notifyDataSetChanged();
@@ -137,13 +175,36 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
         viewPager.setCurrentItem(currentPage, false);
     }
 
-//    private void preloadWeather() {
-//        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(FiveDaysForecastActivity.this);
-//        String lastLongterm = sp.getString("lastLongterm", "");
-//        if (!lastLongterm.isEmpty()) {
-//            new LongTermWeatherTaskFiveDays(this, this, progressDialog).execute("cachedResponse", lastLongterm);
-//        }
-//    }
-
 
 }
+//public class TypefacedSimpleAdapter extends SimpleAdapter {
+//    //private final Typeface mTypeface;
+//
+//    public TypefacedSimpleAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
+//        super(context, data, resource, from, to);
+//        //mTypeface = Typeface.createFromAsset(context.getAssets(),"fonts/weather.ttf");
+//    }
+//
+//    @Override public View getView(int position, View convertView, ViewGroup parent) {
+//        View view = super.getView(position, convertView, parent);
+//        LinearLayout ll = (LinearLayout) view; // get the parent layout view
+//        //TextView icon = (TextView) ll.findViewById(R.id.icon);
+//        //icon.setTypeface(mTypeface);
+//        ImageView viewIcon = (ImageView)ll.findViewById(R.id.viewIcon);
+//
+//        viewIcon.setImageResource(R.drawable.medium_rain);
+//
+//        return ll;
+//    }
+//
+//}
+//
+//    public String getImage (String icon){
+//
+//        if (icon.contains("10d")) {
+//            return String.valueOf(R.drawable.medium_rain);
+//        }
+//        return String.valueOf(R.drawable.ic_cloud_black_18dp);
+//    }
+//
+//map.put("icon",getImage(item.getIcon()));

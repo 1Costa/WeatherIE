@@ -15,6 +15,8 @@ import java.util.Locale;
  */
 public class Weather implements Serializable {
 
+
+
     public enum WindDirection {
         // this order works clockwise and should not be changed
         NORTH, NORTH_NORTH_EAST, NORTH_EAST, EAST_NORTH_EAST,
@@ -63,6 +65,7 @@ public class Weather implements Serializable {
     private String city;
     private String country;
     private Date date;
+    private String weekday;
     private String temperature;
     private String description;
     private String wind;
@@ -100,6 +103,9 @@ public class Weather implements Serializable {
         this.temperature = temperature;
     }
 
+    public String getWeekday() { return weekday; }
+
+    public void setWeekday(String weekday) { this.weekday = weekday; }
 
     public String getDescription() {
         return description;

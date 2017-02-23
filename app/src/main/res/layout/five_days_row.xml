@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -11,6 +12,16 @@
         android:layout_weight="1"
         android:paddingLeft="10dp"
         android:textSize="20sp"/>
+    <TextView
+        android:id="@+id/description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        android:layout_weight="1"
+        android:paddingLeft="10dp"
+        android:textSize="20sp"/>
+
+
 
     <TextView
         android:id="@+id/temperature"
@@ -20,15 +31,20 @@
         android:layout_weight="1"
         android:textAlignment="center"
         android:textSize="20sp"/>
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:srcCompat="@drawable/ic_cloud_black_18dp"
+        android:id="@+id/viewIcon" />
 
-    <TextView
-        android:id="@+id/icon"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="icon"
-        android:layout_weight="1"
-        android:textAlignment="center"
-        android:textSize="20sp"/>
+    <!--<TextView-->
+        <!--android:id="@+id/icon"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="icon"-->
+        <!--android:layout_weight="1"-->
+        <!--android:textAlignment="center"-->
+        <!--android:textSize="20sp"/>-->
 
 
 </LinearLayout>

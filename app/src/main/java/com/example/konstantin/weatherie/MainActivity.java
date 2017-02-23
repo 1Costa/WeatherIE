@@ -27,7 +27,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,6 +45,7 @@ import android.widget.Toast;
 import com.example.konstantin.weatherie.adapters.RecyclerViewFragment;
 import com.example.konstantin.weatherie.adapters.ViewPagerAdapter;
 import com.example.konstantin.weatherie.adapters.WeatherRecyclerAdapter;
+import com.example.konstantin.weatherie.DateUtils;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -773,15 +773,30 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
                 JSONObject listItem = list.getJSONObject(i);
                 //JSONObject main = listItem.getJSONObject("main");
-String weekDay ="";
+
                 Date currentDate = new Date(Long.parseLong(listItem.getString("dt"))*1000);
-                SimpleDateFormat inputFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);
-                String g = inputFormat.format(currentDate);
+                SimpleDateFormat inputFormat = new SimpleDateFormat("EE, dd", Locale.ENGLISH);
+                String weekDay = inputFormat.format(currentDate);
 
-
-                weather.setDate(listItem.getString("dt"));
+Date date = new Date();
+                String dateStr = listItem.getString("dt");
+                date = DateUtils.dateStrToDate(dateStr);
+String f = date.toString();
+                weather.setWeekday(weekDay);
+                //weather.setDate(listItem.getString("dt"));
                 JSONObject temp = listItem.getJSONObject("temp");
                 weather.setTemperature(temp.getString("day"));
+                JSONObject conditions = listItem.optJSONArray("weather").getJSONObject(0);
+                weather.setDescription(conditions.getString("description"));
+                weather.setId(conditions.getString("id"));
+
+
+                weather.setIcon(conditions.getString("icon"));
+
+                //final String dateMsString = listItem.getString("dt") + "000";
+                //Calendar cal = Calendar.getInstance();
+                //cal.setTimeInMillis(Long.parseLong(dateMsString));
+                //weather.setIcon(setWeatherIcon(Integer.parseInt(conditions.getString("id")), cal.get(Calendar.DAY_OF_WEEK)));
 
                     fiveDaysForecastWeather.add(weather);
 
@@ -797,6 +812,8 @@ String weekDay ="";
 
         return ParseResult.OK;
     }
+
+
 
     public ParseResult parseLongTermJson(String result) {
         int i;
@@ -881,9 +898,13 @@ String weekDay ="";
 
     public WeatherRecyclerAdapter getAdapter(int id) {
         WeatherRecyclerAdapter weatherRecyclerAdapter;
-
+        if (id == 0) {
             weatherRecyclerAdapter = new WeatherRecyclerAdapter(this, longTermTodayWeather);
-
+        } else if (id == 1) {
+            weatherRecyclerAdapter = new WeatherRecyclerAdapter(this, longTermTomorrowWeather);
+        } else {
+            weatherRecyclerAdapter = new WeatherRecyclerAdapter(this, longTermWeather);
+        }
         return weatherRecyclerAdapter;
     }
 
@@ -899,8 +920,22 @@ String weekDay ="";
         bundleToday.putInt("day", 0);
         RecyclerViewFragment recyclerViewFragmentToday = new RecyclerViewFragment();
         recyclerViewFragmentToday.setArguments(bundleToday);
-        viewPagerAdapter.addFragment(recyclerViewFragmentToday, " Today 3h Forecast " );
+        viewPagerAdapter.addFragment(recyclerViewFragmentToday, getString(R.string.today));
+
+//        Bundle bundleTomorrow = new Bundle();
+//        bundleTomorrow.putInt("day", 1);
+//        RecyclerViewFragment recyclerViewFragmentTomorrow = new RecyclerViewFragment();
+//        recyclerViewFragmentTomorrow.setArguments(bundleTomorrow);
+//        viewPagerAdapter.addFragment(recyclerViewFragmentTomorrow, getString(R.string.tomorrow));
+//
+//        Bundle bundle = new Bundle();
+//        bundle.putInt("day", 2);
+//        RecyclerViewFragment recyclerViewFragment = new RecyclerViewFragment();
+//        recyclerViewFragment.setArguments(bundle);
+//        viewPagerAdapter.addFragment(recyclerViewFragment, getString(R.string.later));
+
         int currentPage = viewPager.getCurrentItem();
+
         viewPagerAdapter.notifyDataSetChanged();
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
