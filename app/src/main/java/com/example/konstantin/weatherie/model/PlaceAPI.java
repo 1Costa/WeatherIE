@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.model;
 
 import android.util.Log;
 
@@ -25,6 +25,8 @@ public class PlaceAPI {
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
     private static final String OUT_JSON = "/json";
 
+    //This key is registered under @gmail.com on google api's
+    //AIzaSyAZC-qoqzKvQLVF1fldsUFvCZtQKxRSAtQ
     private static final String API_KEY = "AIzaSyAZC-qoqzKvQLVF1fldsUFvCZtQKxRSAtQ";
 
     public ArrayList<String> autocomplete (String input) {

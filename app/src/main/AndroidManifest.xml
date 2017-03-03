@@ -29,6 +29,12 @@
          android:name=".FiveDaysForecastActivity"
          android:label="@string/title_activity_five_day_forecast"
          android:theme="@style/AppTheme.NoActionBar"></activity>
+        <receiver android:name=".helpers.Updater">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

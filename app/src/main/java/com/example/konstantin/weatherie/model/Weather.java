@@ -1,7 +1,9 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.model;
 
 import android.content.Context;
 import android.os.Parcelable;
+
+import com.example.konstantin.weatherie.R;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -65,6 +67,7 @@ public class Weather implements Serializable {
     private String city;
     private String country;
     private Date date;
+    private Date shortDate;
     private String weekday;
     private String temperature;
     private String description;
@@ -235,6 +238,7 @@ public class Weather implements Serializable {
             }
         }
     }
+
 
     public void setDate(Date date) {
         this.date = date;

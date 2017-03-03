@@ -1,9 +1,11 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.adapters;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+
+import com.example.konstantin.weatherie.model.PlaceAPI;
 
 import java.util.ArrayList;
 

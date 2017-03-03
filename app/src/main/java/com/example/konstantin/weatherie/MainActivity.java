@@ -11,9 +11,6 @@ import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
@@ -25,44 +22,43 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Filter;
-import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.konstantin.weatherie.adapters.PlacesAutoCompleteAdapter;
 import com.example.konstantin.weatherie.adapters.RecyclerViewFragment;
 import com.example.konstantin.weatherie.adapters.ViewPagerAdapter;
 import com.example.konstantin.weatherie.adapters.WeatherRecyclerAdapter;
-import com.example.konstantin.weatherie.DateUtils;
+import com.example.konstantin.weatherie.helpers.MesurmentsConvertor;
+import com.example.konstantin.weatherie.helpers.NetworkConnectionCheck;
+import com.example.konstantin.weatherie.helpers.Updater;
+import com.example.konstantin.weatherie.iconsetters.FiveDaysIcons;
+import com.example.konstantin.weatherie.iconsetters.LongTermIcons;
+import com.example.konstantin.weatherie.iconsetters.TodayIcons;
+import com.example.konstantin.weatherie.model.DefaultCity;
+import com.example.konstantin.weatherie.model.Weather;
+import com.example.konstantin.weatherie.weathertasks.FiveDaysForecastWeatherTask;
+import com.example.konstantin.weatherie.weathertasks.LongTermWeatherTask;
+import com.example.konstantin.weatherie.weathertasks.ParseResult;
+import com.example.konstantin.weatherie.weathertasks.TaskOutput;
+import com.example.konstantin.weatherie.weathertasks.TodayWeatherTask;
+import com.example.konstantin.weatherie.weathertasks.WeatherRequestTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -72,7 +68,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements LocationListener, View.OnClickListener {
 
@@ -95,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     Button forecast;
     TextView todayCity;
+    ImageView weatherIcon;
     TextView todayTemperature;
     TextView todayDescription;
     TextView todayWind;
@@ -118,11 +114,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     //public static final String  DEFAULT_CITY = "Limerick";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Initialize the associated SharedPreferences file with default values
+        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
+        boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark ||
+                theme == R.style.AppTheme_NoActionBar_Classic_Dark;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Initialize the associated SharedPreferences file with default values
-        PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
+
 
         // Load toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -133,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         // Initialize labels for weather
         lastUpdate = (TextView) findViewById(R.id.lastUpdate);
         todayCity = (TextView) findViewById(R.id.todayCity);
+        weatherIcon = (ImageView) findViewById(R.id.weatherIcon);
         todayTemperature = (TextView) findViewById(R.id.todayTemperature);
         todayDescription = (TextView) findViewById(R.id.todayDescription);
         todayWind = (TextView) findViewById(R.id.todayWind);
@@ -141,24 +143,25 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         todayIcon = (TextView) findViewById(R.id.todayIcon);
         todaySunrise = (TextView) findViewById(R.id.todaySunrise);
         todaySunset = (TextView) findViewById(R.id.todaySunset);
-        //appView = findViewById(R.id.activity_main);
+        appView = findViewById(R.id.activity_main);
 // Initialize viewPager
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         weatherFont = Typeface.createFromAsset(this.getAssets(), "fonts/weather.ttf");
-        todayIcon.setTypeface(weatherFont);
+        //todayIcon.setTypeface(weatherFont);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
-        boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark ||
-                theme == R.style.AppTheme_NoActionBar_Classic_Dark;
+
+
 
         progressDialog = new ProgressDialog(MainActivity.this);
 
+        if (darkTheme) {
+            toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
+        }
         preloadWeather();
         updateLastUpdateTime();
         // Set autoupdater
-        //Updater.setRecurringAlarm(this);
+        Updater.setRecurringAlarm(this);
 
     }
 
@@ -171,6 +174,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 Intent forecastActivity = new Intent(this, FiveDaysForecastActivity.class);
                 forecastActivity.putExtra("forecastDetailed",longTermFiveDays);
                 forecastActivity.putExtra("forecastFiveDays",fiveDaysForecast);
+                forecastActivity.putExtra("city", todayWeather.getCity());
+                forecastActivity.putExtra("country",todayWeather.getCountry());
                 startActivity(forecastActivity);
                 break;
         }
@@ -202,40 +207,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 //        }
 //    }
 
-    private String setWeatherIcon(int actualId, int hourOfDay) {
-        int id = actualId / 100;
-        String icon = "";
-        if (actualId == 800) {
-            if (hourOfDay >= 7 && hourOfDay < 20) {
-                icon = this.getString(R.string.weather_sunny);
-            } else {
-                icon = this.getString(R.string.weather_clear_night);
-            }
-        } else {
-            switch (id) {
-                case 2:
-                    icon = this.getString(R.string.weather_thunder);
-                    break;
-                case 3:
-                    icon = this.getString(R.string.weather_drizzle);
-                    break;
-                case 7:
-                    icon = this.getString(R.string.weather_foggy);
-                    break;
-                case 8:
-                    icon = this.getString(R.string.weather_cloudy);
-                    break;
-                case 6:
-                    icon = this.getString(R.string.weather_snowy);
-                    break;
-                case 5:
-                    icon = this.getString(R.string.weather_rainy);
-                    break;
-            }
-        }
-        return icon;
-    }
-
     private boolean shouldUpdate() {
         long lastUpdate = PreferenceManager.getDefaultSharedPreferences(this).getLong("lastUpdate", -1);
         boolean cityChanged = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("cityChanged", false);
@@ -256,20 +227,21 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         if (id == R.id.action_refresh) {
             if (net.isNetworkAvailable()) {
                 getTodayWeather();
+                getFiveDaysWeather();
                 //getLongTermWeather();
             } else {
                 Snackbar.make(appView, getString(R.string.msg_connection_not_available), Snackbar.LENGTH_LONG).show();
             }
             return true;
         }
-        if (id == R.id.action_map) {
-            //Intent intent = new Intent(MainActivity.this, MapActivity.class);
-            //startActivity(intent);
-        }
-        if (id == R.id.action_graphs) {
-            //Intent intent = new Intent(MainActivity.this, GraphActivity.class);
-            //startActivity(intent);
-        }
+//        if (id == R.id.action_map) {
+//            //Intent intent = new Intent(MainActivity.this, MapActivity.class);
+//            //startActivity(intent);
+//        }
+//        if (id == R.id.action_graphs) {
+//            //Intent intent = new Intent(MainActivity.this, GraphActivity.class);
+//            //startActivity(intent);
+//        }
         if (id == R.id.action_search) {
             searchCities();
             return true;
@@ -311,9 +283,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 // Get data associated with the specified position
                 // in the list (AdapterView)
                 selectedCity = (String) parent.getItemAtPosition(position);
-                if (!selectedCity.isEmpty()) {
+                if (selectedCity.isEmpty()) {
                    //saveLocation(selectedCity);
-                    Toast.makeText(getBaseContext(), selectedCity, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getBaseContext(), "Type In The City Name", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -340,7 +312,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private void saveLocation(String result) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         // Checks if default Limerick city was changed to other location
-        recentCity = preferences.getString("city",DefaultCity.DEFAULT_CITY);
+        recentCity = preferences.getString("city", DefaultCity.DEFAULT_CITY);
 
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("city", result);
@@ -369,6 +341,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             getFiveDaysWeather();
         }else if(unitsChanged){
             updateTodayWeatherUI();
+            updateLongTermWeatherUI();
         }
     }
 
@@ -614,7 +587,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         todayHumidity.setText(getString(R.string.humidity) + ": " + todayWeather.getHumidity() + " %");
         todaySunrise.setText(getString(R.string.sunrise) + ": " + timeFormat.format(todayWeather.getSunrise()));
         todaySunset.setText(getString(R.string.sunset) + ": " + timeFormat.format(todayWeather.getSunset()));
-        todayIcon.setText(todayWeather.getIcon());
+        weatherIcon.setImageResource(Integer.parseInt(todayWeather.getIcon()));
+        //todayIcon.setText(todayWeather.getIcon());
     }
 
     private String localize(SharedPreferences sp, String preferenceKey, String defaultValueKey) {
@@ -715,7 +689,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             if (windObj.has("deg")) {
                 todayWeather.setWindDirectionDegree(windObj.getDouble("deg"));
             } else {
-                Log.e("parseTodayJson", "No wind available");
+                Log.e("parseTodayJson", "No wind speed");
                 todayWeather.setWindDirectionDegree(null);
             }
             todayWeather.setPressure(main.getString("pressure"));
@@ -737,7 +711,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
             final String idString = reader.getJSONArray("weather").getJSONObject(0).getString("id");
             todayWeather.setId(idString);
-            todayWeather.setIcon(setWeatherIcon(Integer.parseInt(idString), Calendar.getInstance().get(Calendar.HOUR_OF_DAY)));
+            todayWeather.setIcon(TodayIcons.setWeatherIcon(Integer.parseInt(idString), Calendar.getInstance().get(Calendar.HOUR_OF_DAY)));
 
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
             editor.putString("lastToday", result);
@@ -768,35 +742,43 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             fiveDaysForecastWeather = new ArrayList<>();
 
             JSONArray list = reader.getJSONArray("list");
-            for (i = 0; i < list.length(); i++) {
+            for (i = 1; i < list.length(); i++) {
                 Weather weather = new Weather();
 
                 JSONObject listItem = list.getJSONObject(i);
                 //JSONObject main = listItem.getJSONObject("main");
 
-                Date currentDate = new Date(Long.parseLong(listItem.getString("dt"))*1000);
-                SimpleDateFormat inputFormat = new SimpleDateFormat("EE, dd", Locale.ENGLISH);
-                String weekDay = inputFormat.format(currentDate);
 
-Date date = new Date();
-                String dateStr = listItem.getString("dt");
-                date = DateUtils.dateStrToDate(dateStr);
-String f = date.toString();
-                weather.setWeekday(weekDay);
-                //weather.setDate(listItem.getString("dt"));
+                Date currentDate = new Date(Long.parseLong(listItem.getString("dt"))*1000);
+                SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE, dd", Locale.ENGLISH);
+                String weekDay = dayFormat.format(currentDate);
+                //weather.setWeekday(weekDay);
+                //SimpleDateFormat inputFormat = new SimpleDateFormat("dd/MM", Locale.ENGLISH);
+                //String dayDate = inputFormat.format(currentDate);
+                weather.setDate(listItem.getString("dt"));
+
                 JSONObject temp = listItem.getJSONObject("temp");
                 weather.setTemperature(temp.getString("day"));
+                if (listItem.has("deg")) {
+                    weather.setWind(listItem.getString("speed"));
+                    weather.setWindDirectionDegree(listItem.getDouble("deg"));
+                }
+                else {
+                    Log.e("parseFiveDaysJson", "No wind speed");
+                    weather.setWindDirectionDegree(null);
+                }
                 JSONObject conditions = listItem.optJSONArray("weather").getJSONObject(0);
                 weather.setDescription(conditions.getString("description"));
                 weather.setId(conditions.getString("id"));
 
 
-                weather.setIcon(conditions.getString("icon"));
+                //weather.setIcon(conditions.getString("icon"));
 
-                //final String dateMsString = listItem.getString("dt") + "000";
-                //Calendar cal = Calendar.getInstance();
-                //cal.setTimeInMillis(Long.parseLong(dateMsString));
+                final String dateMsString = listItem.getString("dt") + "000";
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(Long.parseLong(dateMsString));
                 //weather.setIcon(setWeatherIcon(Integer.parseInt(conditions.getString("id")), cal.get(Calendar.DAY_OF_WEEK)));
+                weather.setIcon(FiveDaysIcons.setWeatherIcon(Integer.parseInt(conditions.getString("id"))));
 
                     fiveDaysForecastWeather.add(weather);
 
@@ -813,6 +795,34 @@ String f = date.toString();
         return ParseResult.OK;
     }
 
+    // convert milliseconds into the day of the week string
+    public static String dayStringFormat(long msecs) {
+        GregorianCalendar cal = new GregorianCalendar();
+
+        cal.setTime(new Date(msecs));
+
+        int dow = cal.get(Calendar.DAY_OF_WEEK);
+
+        switch (dow) {
+            case Calendar.MONDAY:
+                return "Monday";
+            case Calendar.TUESDAY:
+                return "Tuesday";
+            case Calendar.WEDNESDAY:
+                return "Wednesday";
+            case Calendar.THURSDAY:
+                return "Thursday";
+            case Calendar.FRIDAY:
+                return "Friday";
+            case Calendar.SATURDAY:
+                return "Saturday";
+            case Calendar.SUNDAY:
+                return "Sunday";
+        }
+
+        return "Unknown";
+    }
+
 
 
     public ParseResult parseLongTermJson(String result) {
@@ -825,7 +835,7 @@ String f = date.toString();
                 if (longTermWeather == null) {
                     longTermWeather = new ArrayList<>();
                     longTermTodayWeather = new ArrayList<>();
-                    longTermTomorrowWeather = new ArrayList<>();
+                    //longTermTomorrowWeather = new ArrayList<>();
                 }
                 return ParseResult.CITY_NOT_FOUND;
             }
@@ -871,7 +881,7 @@ String f = date.toString();
                 final String dateMsString = listItem.getString("dt") + "000";
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(Long.parseLong(dateMsString));
-                weather.setIcon(setWeatherIcon(Integer.parseInt(idString), cal.get(Calendar.HOUR_OF_DAY)));
+                weather.setIcon(LongTermIcons.setWeatherIcon(Integer.parseInt(idString), cal.get(Calendar.HOUR_OF_DAY)));
 
 
 
@@ -920,7 +930,7 @@ String f = date.toString();
         bundleToday.putInt("day", 0);
         RecyclerViewFragment recyclerViewFragmentToday = new RecyclerViewFragment();
         recyclerViewFragmentToday.setArguments(bundleToday);
-        viewPagerAdapter.addFragment(recyclerViewFragmentToday, getString(R.string.today));
+        viewPagerAdapter.addFragment(recyclerViewFragmentToday, getString(R.string.today_3h));
 
 //        Bundle bundleTomorrow = new Bundle();
 //        bundleTomorrow.putInt("day", 1);

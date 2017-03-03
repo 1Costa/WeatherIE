@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.helpers;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

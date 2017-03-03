@@ -1,7 +1,11 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.weathertasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+
+import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.weathertasks.ParseResult;
+import com.example.konstantin.weatherie.weathertasks.WeatherRequestTask;
 
 /**
  * Created by Konstantin on 17/02/2017.

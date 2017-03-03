@@ -3,7 +3,6 @@ package com.example.konstantin.weatherie.adapters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.TypedArray;
-import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,9 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.konstantin.weatherie.MainActivity;
-import com.example.konstantin.weatherie.MesurmentsConvertor;
+import com.example.konstantin.weatherie.helpers.MesurmentsConvertor;
 import com.example.konstantin.weatherie.R;
-import com.example.konstantin.weatherie.Weather;
+import com.example.konstantin.weatherie.model.Weather;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -36,7 +35,7 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherViewHold
 
     @Override
     public WeatherViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.adapter_view_row, null);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.adapter_view_row2, null);
 
         WeatherViewHolder viewHolder = new WeatherViewHolder(view);
         return viewHolder;
@@ -114,9 +113,13 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherViewHold
         }
         customViewHolder.itemDescription.setText(weatherItem.getDescription().substring(0, 1).toUpperCase() +
                 weatherItem.getDescription().substring(1) + rainString);
-        Typeface weatherFont = Typeface.createFromAsset(context.getAssets(), "fonts/weather.ttf");
-        customViewHolder.itemIcon.setTypeface(weatherFont);
-        customViewHolder.itemIcon.setText(weatherItem.getIcon());
+        //Typeface weatherFont = Typeface.createFromAsset(context.getAssets(), "fonts/weather.ttf");
+
+
+        //customViewHolder.itemIcon.setTypeface(weatherFont);
+        //customViewHolder.itemIcon.setText(weatherItem.getIcon());
+        customViewHolder.imageViewIcon.setImageResource(Integer.parseInt(weatherItem.getIcon()));
+
         if (sp.getString("speedUnit", "m/s").equals("bft")) {
             customViewHolder.itemyWind.setText(context.getString(R.string.wind) + ": " +
                     MesurmentsConvertor.getBeaufortName((int) wind) + " " + MainActivity.getWindDirectionString(sp, context, weatherItem));
@@ -125,9 +128,9 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherViewHold
                     MainActivity.localize(sp, context, "speedUnit", "m/s")
                     + " " + MainActivity.getWindDirectionString(sp, context, weatherItem));
         }
-        customViewHolder.itemPressure.setText(context.getString(R.string.pressure) + ": " + new DecimalFormat("#.0").format(pressure) + " " +
-                MainActivity.localize(sp, context, "pressureUnit", "hPa"));
-        customViewHolder.itemHumidity.setText(context.getString(R.string.humidity) + ": " + weatherItem.getHumidity() + " %");
+//        customViewHolder.itemPressure.setText(context.getString(R.string.pressure) + ": " + new DecimalFormat("#.0").format(pressure) + " " +
+//                MainActivity.localize(sp, context, "pressureUnit", "hPa"));
+//        customViewHolder.itemHumidity.setText(context.getString(R.string.humidity) + ": " + weatherItem.getHumidity() + " %");
     }
 
     @Override

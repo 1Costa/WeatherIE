@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.helpers;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,8 +24,6 @@ public class DateUtils {
     public static final DateFormat OUTPUT_DAY_FORMAT =
             new SimpleDateFormat("EEEE", Locale.ENGLISH);
 
-    // 2013-10-11T18:08:04
-// 2013-10-11
     public static Date dateStrToDate(String dateStr){
         Date date = new Date();
 

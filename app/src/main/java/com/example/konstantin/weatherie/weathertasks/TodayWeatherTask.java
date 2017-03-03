@@ -1,13 +1,18 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.weathertasks;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+
+import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.weathertasks.ParseResult;
+import com.example.konstantin.weatherie.weathertasks.TaskOutput;
+import com.example.konstantin.weatherie.weathertasks.WeatherRequestTask;
 
 /**
  * Created by Konstantin on 08/02/2017.
  */
 
-class TodayWeatherTask extends WeatherRequestTask {
+public class TodayWeatherTask extends WeatherRequestTask {
     public TodayWeatherTask(Context context, MainActivity activity, ProgressDialog progressDialog) {
         super(context, activity, progressDialog);
     }

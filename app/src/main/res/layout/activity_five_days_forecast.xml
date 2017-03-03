@@ -19,7 +19,7 @@
             app:titleEnabled="false">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/toolbar"
+                android:id="@+id/toolbar_five"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
@@ -38,8 +38,7 @@
             <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
-                android:orientation="vertical"
-                android:background="#FF90CAF9">
+                android:orientation="vertical">
 
                 <ListView
                     android:id="@+id/fiveDaysListView"

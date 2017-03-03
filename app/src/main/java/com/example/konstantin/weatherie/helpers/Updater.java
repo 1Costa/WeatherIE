@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.helpers;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -10,12 +10,15 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.R;
+import com.example.konstantin.weatherie.model.DefaultCity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -122,10 +125,9 @@ import java.util.Locale;
             }
 
             protected void onPostExecute(Void v) {
-                // Update widgets
+                // Update widget
                 //********************************************************AbstractWidgetProvider.updateWidgets(context);
-                //**************************************************************DashClockWeatherExtension.updateDashClock(context);
-            }
+                }
         }
 
         class GetLongTermWeatherTask extends AsyncTask<String, String, Void> {
@@ -191,7 +193,7 @@ import java.util.Locale;
                         onPostExecute(null);
                     }
                 } catch (SecurityException e) {
-                    Log.e(TAG, "Couldn't request location updates. Probably this is an Android (>M) runtime permissions issue ", e);
+                    Log.e(TAG, "Couldn't request location updates. Runtime permissions issue ", e);
                 }
             }
 
@@ -271,9 +273,6 @@ import java.util.Locale;
 
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
                 String language = Locale.getDefault().getLanguage();
-                if(language.equals("cs")) {
-                    language = "cz";
-                }
                 String apiKey = sp.getString("apiKey", context.getResources().getString(R.string.apiKey));
 
                 try {

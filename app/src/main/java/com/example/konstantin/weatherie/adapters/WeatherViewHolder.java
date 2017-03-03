@@ -2,6 +2,7 @@ package com.example.konstantin.weatherie.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.konstantin.weatherie.R;
@@ -14,6 +15,7 @@ public class WeatherViewHolder extends RecyclerView.ViewHolder {
     public TextView itemDate;
     public TextView itemTemperature;
     public TextView itemDescription;
+    public ImageView imageViewIcon;
     public TextView itemyWind;
     public TextView itemPressure;
     public TextView itemHumidity;
@@ -25,6 +27,7 @@ public class WeatherViewHolder extends RecyclerView.ViewHolder {
         this.itemDate = (TextView) view.findViewById(R.id.itemDate);
         this.itemTemperature = (TextView) view.findViewById(R.id.itemTemperature);
         this.itemDescription = (TextView) view.findViewById(R.id.itemDescription);
+        this.imageViewIcon = (ImageView)view.findViewById(R.id.imageViewIcon);
         this.itemyWind = (TextView) view.findViewById(R.id.itemWind);
         this.itemPressure = (TextView) view.findViewById(R.id.itemPressure);
         this.itemHumidity = (TextView) view.findViewById(R.id.itemHumidity);

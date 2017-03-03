@@ -28,12 +28,16 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="22dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
 
                 android:layout_marginTop="6dp"
                 android:paddingTop="?attr/actionBarSize"
                 android:baselineAligned="false"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:weightSum="1">
+
                 <Button
                     android:id="@+id/forecast"
                     android:layout_width="wrap_content"
@@ -41,19 +45,13 @@
                     android:textSize="16dp"
                     android:textAllCaps="false"
                     android:textAlignment="center"
-                    android:text="5 days Forecast" />
+                    android:text="Forecast"
+                    style="@style/Widget.AppCompat.Button.Borderless" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <TextView
-                        android:id="@+id/lastUpdate"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textSize="16dp"
-                        android:textAlignment="center"
-                        android:text="Last time updated" />
 
                     <TextView
                         android:text="City"
@@ -61,15 +59,24 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/todayCity"
                         android:textAlignment="center"
+                        android:padding="2dp"
                         android:textSize="30sp" />
 
-                    <TextView
-                        android:id="@+id/todayIcon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <ImageView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
                         android:layout_gravity="center"
-                        android:text=""
-                        android:textSize="76dp" />
+                        app:srcCompat="@drawable/weather_sunny"
+                        android:id="@+id/weatherIcon"
+                        android:padding="2dp"/>
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/todayIcon"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="center"-->
+                        <!--android:text=""-->
+                        <!--android:textSize="76dp" />-->
 
 
                     <TextView
@@ -79,7 +86,8 @@
                         android:text="0 °C"
                         android:layout_gravity="center"
                         android:textColor="@android:color/white"
-                        android:textSize="36dp" />
+                        android:textSize="36dp"
+                        android:padding="2dp"/>
 
                     <TextView
                         android:id="@+id/todayDescription"
@@ -88,13 +96,14 @@
                         android:text="No data"
                         android:layout_gravity="center"
                         android:textColor="@android:color/white"
-                        android:textSize="16dp" />
+                        android:textSize="16dp"
+                        android:padding="2dp"/>
 
                     <TextView
                         android:id="@+id/todayWind"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:padding="2dp"
                         android:text="Wind: 0 m/s"
                         android:layout_gravity="center"
                         android:textColor="@android:color/white"
@@ -107,7 +116,8 @@
                         android:text="Pressure: 0 hpa"
                         android:layout_gravity="center"
                         android:textColor="@android:color/white"
-                        android:textSize="16dp" />
+                        android:textSize="16dp"
+                        android:padding="2dp"/>
 
                     <TextView
                         android:id="@+id/todayHumidity"
@@ -116,7 +126,17 @@
                         android:text="Humidity: 0 %"
                         android:layout_gravity="center"
                         android:textColor="@android:color/white"
-                        android:textSize="16dp" />
+                        android:textSize="16dp"
+                        android:padding="2dp"/>
+
+                    <TextView
+                        android:id="@+id/lastUpdate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="16dp"
+                        android:textAlignment="center"
+                        android:text="Last time updated"
+                        android:padding="2dp"/>
 
                     <View
                         android:layout_width="fill_parent"
@@ -140,6 +160,7 @@
                         android:layout_gravity="left"
                         android:textColor="@android:color/white"
                         android:textSize="16dp"
+                        android:padding="2dp"
                         android:layout_weight="1"/>
 
                     <TextView
@@ -147,7 +168,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sunset: 00:00"
-                        android:layout_gravity="right"
+                        android:textAlignment="viewEnd"
+                        android:gravity="end"
+                        android:layout_weight="1"
+                        android:padding="2dp"
                         android:textColor="@android:color/white"
                         android:textSize="16dp" />
                 </LinearLayout>

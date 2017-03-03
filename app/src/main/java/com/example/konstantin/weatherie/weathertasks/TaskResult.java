@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.weathertasks;
 
 /**
  * Created by Konstantin on 03/01/2017.

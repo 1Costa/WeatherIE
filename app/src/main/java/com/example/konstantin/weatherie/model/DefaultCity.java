@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.model;
 
 /**
  * Created by Konstantin on 10/01/2017.

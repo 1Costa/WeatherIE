@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.weathertasks;
 
 /**
  * Created by Konstantin on 15/02/2017.
@@ -11,6 +11,10 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.example.konstantin.weatherie.model.DefaultCity;
+import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.R;
 
 import java.io.BufferedReader;
 import java.io.Closeable;
