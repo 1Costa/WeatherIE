@@ -22,6 +22,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.konstantin.weatherie.WorldMap.WorldMapActivity;
 import com.example.konstantin.weatherie.adapters.PlacesAutoCompleteAdapter;
 import com.example.konstantin.weatherie.adapters.RecyclerViewFragment;
 import com.example.konstantin.weatherie.adapters.ViewPagerAdapter;
@@ -94,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     TextView todayTemperature;
     TextView todayDescription;
     TextView todayWind;
+    TextView todayWindDirection;
     TextView todayPressure;
     TextView todayHumidity;
     TextView todaySunrise;
@@ -138,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         todayTemperature = (TextView) findViewById(R.id.todayTemperature);
         todayDescription = (TextView) findViewById(R.id.todayDescription);
         todayWind = (TextView) findViewById(R.id.todayWind);
+        todayWindDirection =(TextView)findViewById(R.id.todayWindDirection);
         todayPressure = (TextView) findViewById(R.id.todayPressure);
         todayHumidity = (TextView) findViewById(R.id.todayHumidity);
         todayIcon = (TextView) findViewById(R.id.todayIcon);
@@ -234,10 +239,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             }
             return true;
         }
-//        if (id == R.id.action_map) {
-//            //Intent intent = new Intent(MainActivity.this, MapActivity.class);
-//            //startActivity(intent);
-//        }
+
 //        if (id == R.id.action_graphs) {
 //            //Intent intent = new Intent(MainActivity.this, GraphActivity.class);
 //            //startActivity(intent);
@@ -253,6 +255,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         if (id == R.id.action_settings) {
             // Create SettingsActivity to manipulate with application
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+            startActivity(intent);
+        }
+        if (id == R.id.action_world_map) {
+            // Create WorldMapActivity to provide layered weather map
+            Intent intent = new Intent(MainActivity.this, WorldMapActivity.class);
             startActivity(intent);
         }
         if (id == R.id.action_about) {
@@ -307,8 +314,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         alert.show();
     }
 
-
-
     private void saveLocation(String result) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         // Checks if default Limerick city was changed to other location
@@ -342,6 +347,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }else if(unitsChanged){
             updateTodayWeatherUI();
             updateLongTermWeatherUI();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        destroyed = true;
+
+        if (locationManager != null) {
+            try {
+                locationManager.removeUpdates(MainActivity.this);
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -571,6 +590,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         double pressure = MesurmentsConvertor.convertPressure((float) Double.parseDouble(todayWeather.getPressure()), sp);
 
         todayTemperature.setText(new DecimalFormat("#.#").format(temperature) + " °" + sp.getString("unit", "C"));
+        // make first character of description Upper Case
        todayDescription.setText(todayWeather.getDescription().substring(0, 1).toUpperCase() +
                 todayWeather.getDescription().substring(1) + rainString);
         if (sp.getString("speedUnit", "m/s").equals("bft")) {
@@ -578,9 +598,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                     MesurmentsConvertor.getBeaufortName((int) wind) +
                     (todayWeather.isWindDirectionAvailable() ? " " + getWindDirectionString(sp, this, todayWeather) : ""));
         } else {
+            //wind direction
+//            String direction = (getString(R.string.wind) + ": " + new DecimalFormat("#.0").format(wind) + " " +
+//                    localize(sp, "speedUnit", "m/s") +
+//                    (todayWeather.isWindDirectionAvailable() ? " " + getWindDirectionString(sp, this, todayWeather) : ""));
+//            SpannableString d = new SpannableString(direction);
+//            d.setSpan(new RelativeSizeSpan(2f), d.length()-2,d.length(), 0);
             todayWind.setText(getString(R.string.wind) + ": " + new DecimalFormat("#.0").format(wind) + " " +
-                    localize(sp, "speedUnit", "m/s") +
-                    (todayWeather.isWindDirectionAvailable() ? " " + getWindDirectionString(sp, this, todayWeather) : ""));
+                    localize(sp, "speedUnit", "m/s"));
+                    todayWindDirection.setText(todayWeather.isWindDirectionAvailable() ? " "
+                            + getWindDirectionString(sp, this, todayWeather) : "");
         }
         todayPressure.setText(getString(R.string.pressure) + ": " + new DecimalFormat("#.0").format(pressure) + " " +
                 localize(sp, "pressureUnit", "hPa"));
