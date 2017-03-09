@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -19,6 +20,7 @@ import android.util.Log;
 import com.example.konstantin.weatherie.MainActivity;
 import com.example.konstantin.weatherie.R;
 import com.example.konstantin.weatherie.model.DefaultCity;
+import com.example.konstantin.weatherie.widget.WidgetDataProvider;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,7 +40,6 @@ import java.util.Locale;
  public class Updater extends BroadcastReceiver {
 
         Context context;
-    NetworkConnectionCheck net = new NetworkConnectionCheck(context) ;
 
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -65,6 +66,7 @@ import java.util.Locale;
 
         private void getWeather() {
             Log.d("Updater", "New Update; requesting download service.");
+            final NetworkConnectionCheck net = new NetworkConnectionCheck(context) ;
             boolean failed;
             if (net.isNetworkAvailable()) {
                 failed = false;
@@ -82,6 +84,12 @@ import java.util.Locale;
             editor.putBoolean("backgroundRefreshFailed", failed);
             editor.apply();
         }
+// something is wrong when I use networkConnectionCheck net
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
         private boolean isUpdateLocation() {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -126,7 +134,7 @@ import java.util.Locale;
 
             protected void onPostExecute(Void v) {
                 // Update widget
-                //********************************************************AbstractWidgetProvider.updateWidgets(context);
+                WidgetDataProvider.updateWidgets(context);
                 }
         }
 
@@ -142,7 +150,6 @@ import java.util.Locale;
                 try {
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
                     String language = Locale.getDefault().getLanguage();
-                    if(language.equals("cs")) { language = "cz"; }
                     String apiKey = sp.getString("apiKey", context.getResources().getString(R.string.apiKey));
                     URL url = new URL("http://api.openweathermap.org/data/2.5/forecast?q=" + URLEncoder.encode(sp.getString("city", DefaultCity.DEFAULT_CITY), "UTF-8") + "&lang="+ language +"&mode=json&appid=" + apiKey);
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -162,6 +169,7 @@ import java.util.Locale;
                     }
                 } catch (IOException e) {
                     // No connection
+                    // Connection problem
                 }
                 return null;
             }
