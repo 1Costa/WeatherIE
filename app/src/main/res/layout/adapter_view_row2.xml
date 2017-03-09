@@ -44,7 +44,6 @@
                 android:id="@+id/itemWind"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:text="Wind: 0 m/s"
                 android:textSize="14sp" />
 

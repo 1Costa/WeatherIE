@@ -111,12 +111,12 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
             //Day of the week and short date
             Date fullDate = item.getDate();
             SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);
-            SimpleDateFormat shortDateFormat = new SimpleDateFormat("dd/MM", Locale.ENGLISH);
+            SimpleDateFormat shortDateFormat = new SimpleDateFormat("MMMM-dd", Locale.ENGLISH);
             String day = dayFormat.format(fullDate);
             String dateShort = shortDateFormat.format(fullDate);
             // Week Day
             map.put("day", day);
-            //Day date short  e.g. 28/02
+            //Day date short  e.g. March-01
             map.put("dateShort", dateShort);
             //forecast conditions description
             map.put("description", item.getDescription());

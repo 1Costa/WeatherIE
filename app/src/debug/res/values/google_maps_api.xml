@@ -20,7 +20,9 @@
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.
     -->
+    <!-- key in project My First Map registered for account @gmail.com -->
+    <!-- https://console.developers.google.com -->
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-        YOUR_KEY_HERE
+        AIzaSyCMXURP7ZK-529iYUf88IR8VxiHK7BgdXs
     </string>
 </resources>

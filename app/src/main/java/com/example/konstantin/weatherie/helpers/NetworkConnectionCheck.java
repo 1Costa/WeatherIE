@@ -10,7 +10,7 @@ import android.net.NetworkInfo;
 
 public class NetworkConnectionCheck {
 
-    private Context context ;
+    Context context ;
 
     public NetworkConnectionCheck(Context context) {
         this.context = context ;
