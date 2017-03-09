@@ -1,45 +1,63 @@
 package com.example.konstantin.weatherie.widget;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
+
+import com.example.konstantin.weatherie.MainActivity;
 import com.example.konstantin.weatherie.R;
+import com.example.konstantin.weatherie.helpers.Updater;
+import com.example.konstantin.weatherie.model.Weather;
+
+import java.text.DateFormat;
 
 /**
  * Implementation of App Widget functionality.
  */
-public class WeatherWidget extends AppWidgetProvider {
+public class WeatherWidget extends WidgetDataProvider {
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        // There may be multiple widgets active, so update all of them
-        for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId);
+        for (int widgetId : appWidgetIds) {
+            RemoteViews remoteViews = new RemoteViews(context.getPackageName(),
+                    R.layout.weather_widget);
+            Intent intent = new Intent(context, Updater.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(context,
+                    0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            remoteViews.setOnClickPendingIntent(R.id.widgetButtonRefresh, pendingIntent);
+
+            Intent intent2 = new Intent(context, MainActivity.class);
+            PendingIntent pendingIntent2 = PendingIntent.getActivity(context, 0, intent2, 0);
+            remoteViews.setOnClickPendingIntent(R.id.weatherWidgetId, pendingIntent2);
+
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            Weather widgetWeather = new Weather();
+            if(!sp.getString("lastToday", "").equals("")) {
+                widgetWeather = parseWidgetJson(sp.getString("lastToday", ""), context);
+            }
+            else {
+                try {
+                    pendingIntent2.send();
+                } catch (PendingIntent.CanceledException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+
+            DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(context);
+            remoteViews.setTextViewText(R.id.widgetCity, widgetWeather.getCity());
+            remoteViews.setTextViewText(R.id.widgetTemperature, widgetWeather.getTemperature());
+            remoteViews.setTextViewText(R.id.widgetLastUpdate, widgetWeather.getLastUpdated());
+            remoteViews.setImageViewResource(R.id.widgetIcon, Integer.parseInt(widgetWeather.getIcon()));
+
+            appWidgetManager.updateAppWidget(widgetId, remoteViews);
         }
-    }
-
-
-    @Override
-    public void onEnabled(Context context) {
-        // Enter relevant functionality for when the first widget is created
-    }
-
-    @Override
-    public void onDisabled(Context context) {
-        // Enter relevant functionality for when the last widget is disabled
-    }
-
-    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-            int appWidgetId) {
-
-        CharSequence widgetText = context.getString(R.string.appwidget_text);
-        // Construct the RemoteViews object
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.weather_widget);
-        views.setTextViewText(R.id.appwidget_text, widgetText);
-
-        // Instruct the widget manager to update the widget
-        appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 }
 
