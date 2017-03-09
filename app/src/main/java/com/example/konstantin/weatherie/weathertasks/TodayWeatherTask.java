@@ -7,6 +7,7 @@ import com.example.konstantin.weatherie.MainActivity;
 import com.example.konstantin.weatherie.weathertasks.ParseResult;
 import com.example.konstantin.weatherie.weathertasks.TaskOutput;
 import com.example.konstantin.weatherie.weathertasks.WeatherRequestTask;
+import com.example.konstantin.weatherie.widget.WidgetDataProvider;
 
 /**
  * Created by Konstantin on 08/02/2017.
@@ -26,9 +27,8 @@ public class TodayWeatherTask extends WeatherRequestTask {
     @Override
     protected void onPostExecute(TaskOutput output) {
         super.onPostExecute(output);
-        // Update widgets
-        //AbstractWidgetProvider.updateWidgets(MainActivity.this);
-        //DashClockWeatherExtension.updateDashClock(MainActivity.this);
+        //Update widget
+        WidgetDataProvider.updateWidgets(activity);
     }
 
     @Override
