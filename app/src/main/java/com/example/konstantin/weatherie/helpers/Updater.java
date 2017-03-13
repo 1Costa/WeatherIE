@@ -52,7 +52,7 @@ import java.util.Locale;
                     getWeather();
                 }
             } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
-                // Get weather if last attempt failed or if 'update location in background' is activated
+                // Get weather if last attempt failed or if update location background activated
                 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
                 String interval = sp.getString("refreshInterval", "1");
                 if (!interval.equals("0") &&
@@ -84,7 +84,7 @@ import java.util.Locale;
             editor.putBoolean("backgroundRefreshFailed", failed);
             editor.apply();
         }
-// something is wrong when I use networkConnectionCheck net
+// something is wrong when I use networkConnectionCheck . net
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
