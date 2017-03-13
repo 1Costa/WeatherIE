@@ -20,13 +20,24 @@ import static org.junit.Assert.assertTrue;
 
 public class MeasurmentConvertorUnitTest {
     @Test
-    public void testConvertFahrenheitToCelsius() {
+    public void testConvertKelvinToCelsius_Fail_Data() {
 
         float actual = MesurmentsConvertor.kelvinToCelsius(100f);
         // expected value is 212
         float expected = 212f;
         // use this method because float is not precise
-        assertNotEquals("Conversion from celsius to fahrenheit failed", expected,
+        assertNotEquals("Conversion from celsius to celsius failed", expected,
+                actual, 0.001);
+    }
+
+    @Test
+    public void testConvertKelvinToCelsius_Success() {
+
+        float actual = MesurmentsConvertor.kelvinToCelsius(290.5f);
+        // expected value is 17.35
+        float expected = 17.35f;
+        // use this method because float is not precise
+        assertEquals("Conversion from celsius to celsius success", expected,
                 actual, 0.001);
     }
 }
