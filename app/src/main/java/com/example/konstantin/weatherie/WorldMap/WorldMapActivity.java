@@ -55,9 +55,9 @@ public class WorldMapActivity extends FragmentActivity{ // implements OnMapReady
                 "map.removeLayer(temperatureLayer);map.removeLayer(precipitationsLayer);map.removeLayer(snowLayer);" +
                 "map.removeLayer(rainLayer);map.removeLayer(windLayer);map.removeLayer(seaLevelPressLayer);");
 
-        ArrayAdapter<String> adpt = new ArrayAdapter<String>(this, R.layout.spinner_custom_item, tileName);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.spinner_custom_item, tileName);
 
-        spinner.setAdapter(adpt);
+        spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
