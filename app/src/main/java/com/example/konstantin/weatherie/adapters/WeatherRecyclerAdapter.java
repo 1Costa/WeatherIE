@@ -87,17 +87,12 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherViewHold
 
         if (sp.getBoolean("differentiateDaysByTint", false)) {
             Date now = new Date();
-            /* Unfortunately, the getColor() that takes a theme (the next commented line) is Android 6.0 only, so we have to do it manually
-             * customViewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.attr.colorTintedBackground, context.getTheme())); */
             int color;
             if (weatherItem.getNumDaysFrom(now) > 1) {
                 TypedArray ta = context.obtainStyledAttributes(new int[]{R.attr.colorTintedBackground, R.attr.colorBackground});
                 if (weatherItem.getNumDaysFrom(now) % 2 == 1) {
                     color = ta.getColor(0, context.getResources().getColor(R.color.colorTintedBackground));
                 } else {
-                    /* We must explicitly set things back, because RecyclerView seems to reuse views and
-                     * without restoring back the "normal" color, just about everything gets tinted if we
-                     * scroll a couple of times! */
                     color = ta.getColor(1, context.getResources().getColor(R.color.colorBackground));
                 }
                 ta.recycle();
@@ -113,11 +108,7 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherViewHold
         }
         customViewHolder.itemDescription.setText(weatherItem.getDescription().substring(0, 1).toUpperCase() +
                 weatherItem.getDescription().substring(1) + rainString);
-        //Typeface weatherFont = Typeface.createFromAsset(context.getAssets(), "fonts/weather.ttf");
 
-
-        //customViewHolder.itemIcon.setTypeface(weatherFont);
-        //customViewHolder.itemIcon.setText(weatherItem.getIcon());
         customViewHolder.imageViewIcon.setImageResource(Integer.parseInt(weatherItem.getIcon()));
 
         if (sp.getString("speedUnit", "m/s").equals("bft")) {
@@ -128,10 +119,7 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherViewHold
                     MainActivity.localize(sp, context, "speedUnit", "m/s")
                     + " " + MainActivity.getWindDirectionString(sp, context, weatherItem));
         }
-//        customViewHolder.itemPressure.setText(context.getString(R.string.pressure) + ": " + new DecimalFormat("#.0").format(pressure) + " " +
-//                MainActivity.localize(sp, context, "pressureUnit", "hPa"));
-//        customViewHolder.itemHumidity.setText(context.getString(R.string.humidity) + ": " + weatherItem.getHumidity() + " %");
-    }
+   }
 
     @Override
     public int getItemCount() {

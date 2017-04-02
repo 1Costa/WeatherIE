@@ -49,8 +49,6 @@ public class WeatherWidget extends WidgetDataProvider {
                 }
                 return;
             }
-
-            DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(context);
             remoteViews.setTextViewText(R.id.widgetCity, widgetWeather.getCity());
             remoteViews.setTextViewText(R.id.widgetTemperature, widgetWeather.getTemperature());
             remoteViews.setTextViewText(R.id.widgetLastUpdate, widgetWeather.getLastUpdated());

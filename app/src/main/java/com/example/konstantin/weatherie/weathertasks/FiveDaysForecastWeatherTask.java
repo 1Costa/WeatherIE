@@ -26,9 +26,5 @@ public class FiveDaysForecastWeatherTask extends WeatherRequestTask {
         //will do request for 5 days including current day
         return "forecast/daily";
     }
-//
-//    @Override
-//    protected void updateMainUI() {
-//        activity.updateLongTermWeatherUI();
-//    }
+
 }

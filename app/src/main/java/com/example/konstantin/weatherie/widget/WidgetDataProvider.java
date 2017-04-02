@@ -33,7 +33,6 @@ public abstract class WidgetDataProvider extends AppWidgetProvider {
     protected Weather parseWidgetJson(String result, Context context) {
         try {
             //MainActivity.initMappings();
-
             JSONObject reader = new JSONObject(result);
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -48,7 +47,6 @@ public abstract class WidgetDataProvider extends AppWidgetProvider {
             final String idString = reader.getJSONArray("weather").getJSONObject(0).getString("id");
             weatherWidget.setId(idString);
             weatherWidget.setIcon(TodayIcons.setWeatherIcon(Integer.parseInt(idString), Calendar.getInstance().get(Calendar.HOUR_OF_DAY)));
-            //weatherWidget.setIcon(TodayIcons.setWeatherIcon(Integer.parseInt(reader.optJSONArray("weather").getJSONObject(0).getString("id")), Calendar.getInstance().get(Calendar.HOUR_OF_DAY), context));
             //last time updated
             long lastUpdateTimeInMillis = sp.getLong("lastUpdate", -1);
             String lastUpdate;

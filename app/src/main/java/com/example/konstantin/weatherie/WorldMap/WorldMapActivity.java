@@ -38,10 +38,6 @@ public class WorldMapActivity extends FragmentActivity{ // implements OnMapReady
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_world_map);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         String apiKey = sp.getString("apiKey", getResources().getString(R.string.apiKey));
@@ -98,14 +94,8 @@ public class WorldMapActivity extends FragmentActivity{ // implements OnMapReady
                         break;
 
                 }
-
-//                if (mMap != null) {
-//                    tileOver.remove();
-//                    setUpMap();
-//                }
             }
         });
-       // setUpMapIfNeeded();
     }
 
     @Override
@@ -114,29 +104,8 @@ public class WorldMapActivity extends FragmentActivity{ // implements OnMapReady
         //setUpMapIfNeeded();
     }
 
-//    private void setUpMapIfNeeded() {
-//        // Do a null check to confirm that we have not already instantiated the map.
-//        if (mMap == null) {
-//            // Try to obtain the map from the SupportMapFragment.
-//
-//            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                    .findFragmentById(R.id.map);
-//            mapFragment.getMapAsync(this);
-//            // Check if we were successful in obtaining the map.
-//            if (mMap != null) {
-//                setUpMap();
-//            }
-//        }
-//    }
-
-    /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p/>
-     * This should only be called once and when we are sure that {@link #mMap} is not null.
-     */
     private void setUpMap() {
-        // Add weather tile
+        // Add weather tile for test only
 
 //        LatLng sydney = new LatLng(-34, 151);
 //        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
@@ -168,10 +137,5 @@ public class WorldMapActivity extends FragmentActivity{ // implements OnMapReady
 
         return tileProvider;
     }
-//    @Override
-//    public void onMapReady(GoogleMap googleMap) {
-//        mMap = googleMap;
-//
-//        setUpMap();
-//    }
+
 }

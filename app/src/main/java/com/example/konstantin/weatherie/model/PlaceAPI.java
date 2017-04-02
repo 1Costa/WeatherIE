@@ -1,6 +1,12 @@
 package com.example.konstantin.weatherie.model;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,10 +30,13 @@ public class PlaceAPI {
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
     private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
     private static final String OUT_JSON = "/json";
-
+    private Context context;
+    MainActivity activity;
+    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
     //This key is registered under @gmail.com on google api's
     //AIzaSyAZC-qoqzKvQLVF1fldsUFvCZtQKxRSAtQ
-    private static final String API_KEY = "AIzaSyAZC-qoqzKvQLVF1fldsUFvCZtQKxRSAtQ";
+    //private static final String API_KEY = "AIzaSyAZC-qoqzKvQLVF1fldsUFvCZtQKxRSAtQ" ;
+    private String API_KEY = sp.getString("placesApiKey",activity.getResources().getString(R.string.placesApiKey) );
 
     public ArrayList<String> autocomplete (String input) {
         ArrayList<String> resultList = null;

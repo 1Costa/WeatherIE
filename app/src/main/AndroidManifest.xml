@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.konstantin.weatherie">
 
-    <!-- Set of permissions -->
+    <!-- Set of permissions used -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -63,6 +63,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/weather_widget_info" />
         </receiver>
+
+        <activity android:name=".GraphsActivity"
+            android:label="@string/action_graphs"
+            android:parentActivityName=".MainActivity"></activity>
     </application>
 
 </manifest>

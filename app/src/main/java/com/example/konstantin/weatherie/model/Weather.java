@@ -17,8 +17,6 @@ import java.util.Locale;
  */
 public class Weather implements Serializable {
 
-
-
     public enum WindDirection {
         // this order works clockwise and should not be changed
         NORTH, NORTH_NORTH_EAST, NORTH_EAST, EAST_NORTH_EAST,

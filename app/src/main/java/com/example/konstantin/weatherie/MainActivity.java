@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
@@ -29,6 +31,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -127,8 +130,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
-
         // Load toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -153,10 +154,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         weatherFont = Typeface.createFromAsset(this.getAssets(), "fonts/weather.ttf");
-        //todayIcon.setTypeface(weatherFont);
-
-
-
 
         progressDialog = new ProgressDialog(MainActivity.this);
 
@@ -233,17 +230,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             if (net.isNetworkAvailable()) {
                 getTodayWeather();
                 getFiveDaysWeather();
-                //getLongTermWeather();
+                getLongTermWeather();
             } else {
                 Snackbar.make(appView, getString(R.string.msg_connection_not_available), Snackbar.LENGTH_LONG).show();
             }
             return true;
         }
 
-//        if (id == R.id.action_graphs) {
-//            //Intent intent = new Intent(MainActivity.this, GraphActivity.class);
-//            //startActivity(intent);
-//        }
+        if (id == R.id.action_graphs) {
+            Intent intent = new Intent(MainActivity.this, GraphsActivity.class);
+            startActivity(intent);
+        }
         if (id == R.id.action_search) {
             searchCities();
             return true;
@@ -264,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
         if (id == R.id.action_about) {
             // Create dialog or Activity with description of the project
-            //aboutDialog();
+            aboutDialog();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -335,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         super.onResume();
         boolean unitsChanged = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("unitsChanged",false);
         if (getTheme(PreferenceManager.getDefaultSharedPreferences(this).getString("theme", "fresh")) != theme) {
-            // Restart activity to apply theme
+            // Restart activity to apply theme settings
             overridePendingTransition(0, 0);
             finish();
             overridePendingTransition(0, 0);
@@ -456,7 +453,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
 
         @Override
-        protected void onPreExecute() { /*Do Nothing*/ }
+        protected void onPreExecute() { /*do Nothing*/ }
 
         @Override
         protected String getAPIName() {
@@ -481,7 +478,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 if (countryObj != null) {
                     country = ", " + countryObj.getString("country");
                 }
-
                 saveLocation(city + country);
 
             } catch (JSONException e) {
@@ -565,17 +561,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         todayCity.setText(city + (country.isEmpty() ? "" : ", " + country));
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-
         // Temperature
         float temperature = MesurmentsConvertor.convertTemperature(Float.parseFloat(todayWeather.getTemperature()), sp);
         if (sp.getBoolean("temperatureInteger", false)) {
             temperature = Math.round(temperature);
         }
-
         // Rain
         double rain = Double.parseDouble(todayWeather.getRain());
         String rainString = MesurmentsConvertor.getRainString(rain, sp);
-
         // Wind
         double wind;
         try {
@@ -599,11 +592,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                     (todayWeather.isWindDirectionAvailable() ? " " + getWindDirectionString(sp, this, todayWeather) : ""));
         } else {
             //wind direction
-//            String direction = (getString(R.string.wind) + ": " + new DecimalFormat("#.0").format(wind) + " " +
-//                    localize(sp, "speedUnit", "m/s") +
-//                    (todayWeather.isWindDirectionAvailable() ? " " + getWindDirectionString(sp, this, todayWeather) : ""));
-//            SpannableString d = new SpannableString(direction);
-//            d.setSpan(new RelativeSizeSpan(2f), d.length()-2,d.length(), 0);
             todayWind.setText(getString(R.string.wind) + ": " + new DecimalFormat("#.0").format(wind) + " " +
                     localize(sp, "speedUnit", "m/s"));
                     todayWindDirection.setText(todayWeather.isWindDirectionAvailable() ? " "
@@ -851,7 +839,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     }
 
 
-
     public ParseResult parseLongTermJson(String result) {
         int i;
         try {
@@ -862,7 +849,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 if (longTermWeather == null) {
                     longTermWeather = new ArrayList<>();
                     longTermTodayWeather = new ArrayList<>();
-                    //longTermTomorrowWeather = new ArrayList<>();
                 }
                 return ParseResult.CITY_NOT_FOUND;
             }
@@ -909,9 +895,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(Long.parseLong(dateMsString));
                 weather.setIcon(LongTermIcons.setWeatherIcon(Integer.parseInt(idString), cal.get(Calendar.HOUR_OF_DAY)));
-
-
-
                 Calendar today = Calendar.getInstance();
                 //today.set(Calendar.DAY_OF_YEAR, 1);
                 if (cal.get(Calendar.DAY_OF_YEAR) == today.get(Calendar.DAY_OF_YEAR)) {
@@ -958,19 +941,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         RecyclerViewFragment recyclerViewFragmentToday = new RecyclerViewFragment();
         recyclerViewFragmentToday.setArguments(bundleToday);
         viewPagerAdapter.addFragment(recyclerViewFragmentToday, getString(R.string.today_3h));
-
-//        Bundle bundleTomorrow = new Bundle();
-//        bundleTomorrow.putInt("day", 1);
-//        RecyclerViewFragment recyclerViewFragmentTomorrow = new RecyclerViewFragment();
-//        recyclerViewFragmentTomorrow.setArguments(bundleTomorrow);
-//        viewPagerAdapter.addFragment(recyclerViewFragmentTomorrow, getString(R.string.tomorrow));
-//
-//        Bundle bundle = new Bundle();
-//        bundle.putInt("day", 2);
-//        RecyclerViewFragment recyclerViewFragment = new RecyclerViewFragment();
-//        recyclerViewFragment.setArguments(bundle);
-//        viewPagerAdapter.addFragment(recyclerViewFragment, getString(R.string.later));
-
         int currentPage = viewPager.getCurrentItem();
 
         viewPagerAdapter.notifyDataSetChanged();
@@ -983,18 +953,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         viewPager.setCurrentItem(currentPage, false);
     }
 
-//    public enum ParseResult {
-//        OK, JSON_EXCEPTION, CITY_NOT_FOUND
-//    }
-//
-//    public enum TaskResult {
-//        SUCCESS, BAD_RESPONSE, IO_EXCEPTION, TOO_MANY_REQUESTS;
-//    }
-//
-//    public class TaskOutput {
-//        // Indicates result of parsing server response
-//        ParseResult parseResult;
-//        // Indicates result of background task
-//        TaskResult taskResult;
-//    }
+    private void aboutDialog() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        alert.setTitle("Weather IE");
+        final WebView webView = new WebView(this);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.loadUrl("file:///android_asset/about.html");
+        webView.setBackgroundColor(Color.TRANSPARENT);
+        alert.setView(webView);
+        alert.setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+
+            }
+        });
+        alert.show();
+    }
 }

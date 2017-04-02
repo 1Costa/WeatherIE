@@ -21,7 +21,6 @@ public class RecyclerViewFragment extends Fragment {
     public RecyclerViewFragment() {
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

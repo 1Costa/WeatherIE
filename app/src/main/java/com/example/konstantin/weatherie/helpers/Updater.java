@@ -71,7 +71,7 @@ import java.util.Locale;
             if (net.isNetworkAvailable()) {
                 failed = false;
                 if (isUpdateLocation()) {
-                    new GetLocationAndWeatherTask().execute(); // This method calls the two methods below once it has determined a location
+                    new GetLocationAndWeatherTask().execute(); // This method calls the two methods below, once it has determined a location
                 } else {
                     new GetWeatherTask().execute();
                     new GetLongTermWeatherTask().execute();
@@ -84,12 +84,6 @@ import java.util.Locale;
             editor.putBoolean("backgroundRefreshFailed", failed);
             editor.apply();
         }
-// something is wrong when I use networkConnectionCheck . net
-    private boolean isNetworkAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
-    }
 
         private boolean isUpdateLocation() {
             SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -194,7 +188,7 @@ import java.util.Locale;
                 locationListener = new BackgroundLocationListener();
                 try {
                     if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
-                        // Only uses 'network' location, as asking the GPS every time would drain too much battery
+                        // Only uses 'network' location, as asking the GPS every time drains too much battery
                         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
                     } else {
                         Log.d(TAG, "'Network' location is not enabled. Cancelling determining location.");
@@ -209,7 +203,7 @@ import java.util.Locale;
             protected Void doInBackground(String... params) {
                 long startTime = System.currentTimeMillis();
                 long runningTime = 0;
-                while (locationListener.getLocation() == null && runningTime < MAX_RUNNING_TIME) { // Give up after 30 seconds
+                while (locationListener.getLocation() == null && runningTime < MAX_RUNNING_TIME) { // Give up/cancel after 30 seconds
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e) {

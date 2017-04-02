@@ -65,18 +65,10 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-
-
         longTermWeather = (ArrayList<Weather>) getIntent().getSerializableExtra("forecastDetailed");
         fiveDaysWeather = (ArrayList<Weather>) getIntent().getSerializableExtra("forecastFiveDays");
         city = getIntent().getStringExtra("city");
         country = getIntent().getStringExtra("country");
-        //weatherFont = Typeface.createFromAsset(this.getAssets(), "fonts/weather.ttf");
-
-        //progressDialog = new ProgressDialog(FiveDaysForecastActivity.this);
-        //preloadWeather();
-       // updateLastUpdateTime();
-
         updateLongTermWeatherUI();
     }
     private int getTheme(String PreferedApplicationTheme) {
@@ -96,7 +88,6 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         updateListView();
-        //getSupportActionBar().setTitle(city + (country.isEmpty() ? "" : ", " + country));
         getSupportActionBar().setTitle("Forecast for "+ city + (country.isEmpty() ? "" : ", " + country));
     }
 
@@ -164,9 +155,7 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
         fiveDaysListView.setBackgroundColor(0);
         // create and set the adapter
         adapter =
-                new TypefacedSimpleAdapter(this, data, resource,from,to);
-//new String[]{"day","description","icon","temp"},
-       //new int[] {R.id.dayOfWeek,R.id.description,R.id.viewIcon, R.id.temperature}
+                new View_SimpleAdapter(this, data, resource,from,to);
         fiveDaysListView.setAdapter(adapter);
 
     }
@@ -179,27 +168,18 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
         return String.valueOf(R.drawable.ic_cloud_black_18dp);
     }
 
-    private class TypefacedSimpleAdapter extends SimpleAdapter {
-        //private final Typeface mTypeface;
+    private class View_SimpleAdapter extends SimpleAdapter {
 
-        public TypefacedSimpleAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
+        public View_SimpleAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
             super(context, data, resource, from, to);
-            //mTypeface = Typeface.createFromAsset(context.getAssets(),"fonts/weather.ttf");
         }
 
         @Override public View getView(int position, View convertView, ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
             LinearLayout ll = (LinearLayout) view; // get the parent layout view
-            //TextView icon = (TextView) ll.findViewById(R.id.icon);
-            //icon.setTypeface(mTypeface);
-            //ImageView viewIcon = (ImageView)ll.findViewById(R.id.viewIcon);
-
-            //viewIcon.setImageResource(R.drawable.medium_rain);
             return ll;
         }
     }
-
-
 
     public WeatherRecyclerAdapter getAdapter(int id) {
         WeatherRecyclerAdapter weatherRecyclerAdapter;
@@ -250,35 +230,4 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
     }
 
 
-}
-//public class TypefacedSimpleAdapter extends SimpleAdapter {
-//    //private final Typeface mTypeface;
-//
-//    public TypefacedSimpleAdapter(Context context, ArrayList<HashMap<String, String>> data, int resource, String[] from, int[] to) {
-//        super(context, data, resource, from, to);
-//        //mTypeface = Typeface.createFromAsset(context.getAssets(),"fonts/weather.ttf");
-//    }
-//
-//    @Override public View getView(int position, View convertView, ViewGroup parent) {
-//        View view = super.getView(position, convertView, parent);
-//        LinearLayout ll = (LinearLayout) view; // get the parent layout view
-//        //TextView icon = (TextView) ll.findViewById(R.id.icon);
-//        //icon.setTypeface(mTypeface);
-//        ImageView viewIcon = (ImageView)ll.findViewById(R.id.viewIcon);
-//
-//        viewIcon.setImageResource(R.drawable.medium_rain);
-//
-//        return ll;
-//    }
-//
-//}
-//
-//    public String getImage (String icon){
-//
-//        if (icon.contains("10d")) {
-//            return String.valueOf(R.drawable.medium_rain);
-//        }
-//        return String.valueOf(R.drawable.ic_cloud_black_18dp);
-//    }
-//
-//map.put("icon",getImage(item.getIcon()));
+}//end of class activity

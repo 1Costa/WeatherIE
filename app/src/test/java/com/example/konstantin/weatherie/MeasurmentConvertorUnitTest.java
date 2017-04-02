@@ -23,6 +23,7 @@ public class MeasurmentConvertorUnitTest {
     public void testConvertKelvinToCelsius_Fail_Data() {
 
         float actual = MesurmentsConvertor.kelvinToCelsius(100f);
+        //actual value -173.15, test must fail
         // expected value is 212
         float expected = 212f;
         // use this method because float is not precise
