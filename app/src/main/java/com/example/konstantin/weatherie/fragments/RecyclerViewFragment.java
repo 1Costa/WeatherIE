@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie.adapters;
+package com.example.konstantin.weatherie.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,7 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.activities.MainActivity;
 import com.example.konstantin.weatherie.R;
 
 /**

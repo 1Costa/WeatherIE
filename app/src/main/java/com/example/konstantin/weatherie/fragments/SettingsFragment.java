@@ -1,10 +1,8 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.fragments;
 
 
-import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
@@ -16,9 +14,10 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 
+import com.example.konstantin.weatherie.R;
+import com.example.konstantin.weatherie.activities.MainActivity;
+import com.example.konstantin.weatherie.activities.SettingsActivity;
 import com.example.konstantin.weatherie.helpers.Updater;
 
 import java.text.SimpleDateFormat;
@@ -32,16 +31,14 @@ public class SettingsFragment extends PreferenceFragment
     MainActivity main = new MainActivity();
     private boolean unitsChanged = false;
     SharedPreferences preferences;
-
     public SettingsFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        //getActivity().setTheme(getTheme(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("theme", "fresh")));
+        //getActivity().setTheme(getTheme(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("theme", "darksky")));
         super.onCreate(savedInstanceState);
-
 
 //        ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
 //        actionBar.setDisplayHomeAsUpEnabled(true);
@@ -53,31 +50,6 @@ public class SettingsFragment extends PreferenceFragment
 
     }
 
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        getActivity().setTheme(getTheme(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("theme", "fresh")));
-//
-//
-//        return super.onCreateView(inflater, container, savedInstanceState);
-//
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                // app icon in action bar clicked; goto parent activity.
-//                getActivity().finish();
-//                return true;
-//            default:
-//                // If we got here, the user's action was not recognized.
-//                // Invoke the superclass to handle it.
-//                //Log.d(String.valueOf(item), "strange number id message");
-//                return super.onOptionsItemSelected(item);
-//
-//        }
-//    }
-
     @Override
     public void onResume(){
         super.onResume();
@@ -85,7 +57,6 @@ public class SettingsFragment extends PreferenceFragment
 
         setCustomDateEnabled();
         updateDateFormatList();
-
 
         // Set summaries to current value
         setListPreferenceSummary("unit");
@@ -125,9 +96,11 @@ public class SettingsFragment extends PreferenceFragment
             case "dateFormat":
                 setCustomDateEnabled();
                 setListPreferenceSummary(key);
+                unitsChanged = true;
                 break;
             case "dateFormatCustom":
                 updateDateFormatList();
+                unitsChanged = true;
                 break;
             case "theme":
                 // Restart activity to apply theme
@@ -138,42 +111,26 @@ public class SettingsFragment extends PreferenceFragment
                 break;
             case "updateLocationAutomatically":
                 if (sharedPreferences.getBoolean(key, false) == true) {
-                    requestReadLocationPermission();
+                    ((SettingsActivity)getActivity()).requestReadLocationPermission();
                 }
                 break;
         }
     }
-    public void requestReadLocationPermission() {
-        System.out.println("Calling request location permission");
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
-                    Manifest.permission.READ_CONTACTS)) {
-                // Explanation not needed, since user requests this himself
 
-            } else {
-                ActivityCompat.requestPermissions(getActivity(),
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                        MainActivity.MY_PERMISSIONS_ACCESS_FINE_LOCATION);
-            }
-        } else {
-            privacyGuardWorkaround();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == MainActivity.MY_PERMISSIONS_ACCESS_FINE_LOCATION) {
-            boolean permissionGranted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
-            CheckBoxPreference checkBox = (CheckBoxPreference) findPreference("updateLocationAutomatically");
+    public void setGranted(boolean permissionGranted) {
+        CheckBoxPreference checkBox = (CheckBoxPreference) findPreference("updateLocationAutomatically");
+        if(permissionGranted){
             checkBox.setChecked(permissionGranted);
             if (permissionGranted) {
                 privacyGuardWorkaround();
             }
         }
+        else{
+            checkBox.setChecked(permissionGranted);
+        }
     }
 
     public void privacyGuardWorkaround() {
-        // Workaround for CM privacy guard. Register for location updates in order for it to ask us for permission
         LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         try {
             DummyLocationListener dummyLocationListener = new DummyLocationListener();
@@ -233,18 +190,6 @@ public class SettingsFragment extends PreferenceFragment
         setListPreferenceSummary("dateFormat");
     }
 
-//    private int getTheme(String themePref) {
-//        switch (themePref) {
-//            case "dark":
-//                return R.style.AppTheme_Dark;
-//            case "classic":
-//                return R.style.AppTheme_Classic;
-//            case "classicdark":
-//                return R.style.AppTheme_Classic_Dark;
-//            default:
-//                return R.style.AppTheme;
-//        }
-//    }
     public class DummyLocationListener implements LocationListener {
 
         @Override

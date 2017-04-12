@@ -2,14 +2,14 @@ package com.example.konstantin.weatherie.adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.TypedArray;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.activities.MainActivity;
 import com.example.konstantin.weatherie.helpers.MesurmentsConvertor;
 import com.example.konstantin.weatherie.R;
 import com.example.konstantin.weatherie.model.Weather;
@@ -88,14 +88,14 @@ public class WeatherRecyclerAdapter extends RecyclerView.Adapter<WeatherViewHold
         if (sp.getBoolean("differentiateDaysByTint", false)) {
             Date now = new Date();
             int color;
-            if (weatherItem.getNumDaysFrom(now) > 1) {
-                TypedArray ta = context.obtainStyledAttributes(new int[]{R.attr.colorTintedBackground, R.attr.colorBackground});
+            if (weatherItem.getNumDaysFrom(now) > 0) {
+                //TypedArray ta = context.obtainStyledAttributes(new int[]{R.attr.colorTintedBackground, R.attr.colorBackground});
                 if (weatherItem.getNumDaysFrom(now) % 2 == 1) {
-                    color = ta.getColor(0, context.getResources().getColor(R.color.colorTintedBackground));
+                    color = ContextCompat.getColor(context, R.color.colorTintedBackground);
                 } else {
-                    color = ta.getColor(1, context.getResources().getColor(R.color.colorBackground));
+                    color = ContextCompat.getColor(context, R.color.colorBackground);
                 }
-                ta.recycle();
+                //ta.recycle();
                 customViewHolder.itemView.setBackgroundColor(color);
             }
         }

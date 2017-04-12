@@ -81,8 +81,20 @@
     <string name="pressure_unit_kpa">kPa</string>
     <string name="pressure_unit_mmhg">mm Hg</string>
 
-    <string name="setting_theme_fresh">Fresh</string>
-    <string name="setting_theme_classic">Classic</string>
+
+    <string name="sharedprefs_default_value_temperature_units">C</string>
+    <string name="sharedprefs_default_value_length_units">mm</string>
+    <string name="sharedprefs_default_value_speed_units">m/s</string>
+    <string name="sharedprefs_default_value_pressure_units">hPa</string>
+    <string name="sharedprefs_default_value_darksky">darksky</string>
+    <string name="sharedprefs_default_value_wind_direction_arrow">arrow</string>
+
+
+    <string name="setting_theme_darksky">Dark Sky</string>
+    <string name="setting_theme_clover">Clover</string>
+    <string name="setting_theme_clearsky">Clear Sky</string>
+    <string name="setting_theme_clearblue">Clear Blue</string>
+    <string name="setting_theme_classic">Classic Grey</string>
     <string name="setting_theme_dark">Fresh Dark</string>
     <string name="setting_theme_classic_dark">Classic Dark</string>
 

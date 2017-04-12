@@ -2,7 +2,7 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
     <PreferenceCategory android:title="@string/settings_title_units">
         <ListPreference
-            android:defaultValue="C"
+            android:defaultValue="@string/sharedprefs_default_value_temperature_units"
             android:entries="@array/temperatureUnits"
             android:entryValues="@array/temperatureUnitsValues"
             android:key="unit"
@@ -14,21 +14,21 @@
             android:title="@string/setting_showTempAsInteger" />
 
         <ListPreference
-            android:defaultValue="mm"
+            android:defaultValue="@string/sharedprefs_default_value_length_units"
             android:entries="@array/lengthUnits"
             android:entryValues="@array/lengthUnitsValues"
             android:key="lengthUnit"
             android:title="@string/setting_lengthUnits" />
 
         <ListPreference
-            android:defaultValue="m/s"
+            android:defaultValue="@string/sharedprefs_default_value_speed_units"
             android:entries="@array/speedUnits"
             android:entryValues="@array/speedUnitsValues"
             android:key="speedUnit"
             android:title="@string/setting_speedUnits" />
 
         <ListPreference
-            android:defaultValue="hPa"
+            android:defaultValue="@string/sharedprefs_default_value_pressure_units"
             android:entries="@array/pressureUnits"
             android:entryValues="@array/pressureUnitsValues"
             android:key="pressureUnit"
@@ -51,14 +51,14 @@
     <PreferenceCategory android:title="@string/settings_title_display">
 
         <ListPreference
-            android:defaultValue="fresh"
+            android:defaultValue="@string/sharedprefs_default_value_darksky"
             android:entries="@array/themes"
             android:entryValues="@array/themesValues"
             android:key="theme"
             android:title="@string/setting_theme" />
 
         <ListPreference
-            android:defaultValue="arrow"
+            android:defaultValue="@string/sharedprefs_default_value_wind_direction_arrow"
             android:entries="@array/windDirectionFormats"
             android:entryValues="@array/windDirectionFormatValues"
             android:key="windDirectionFormat"

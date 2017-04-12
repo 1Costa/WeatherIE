@@ -6,15 +6,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.activities.MainActivity;
 import com.example.konstantin.weatherie.R;
 import com.example.konstantin.weatherie.helpers.MesurmentsConvertor;
 import com.example.konstantin.weatherie.iconsetters.TodayIcons;

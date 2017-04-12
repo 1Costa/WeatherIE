@@ -13,7 +13,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.example.konstantin.weatherie.model.DefaultCity;
-import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.activities.MainActivity;
 import com.example.konstantin.weatherie.R;
 
 import java.io.BufferedReader;

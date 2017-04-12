@@ -112,15 +112,22 @@
     </string-array>
 
     <string-array name="themes">
-        <item name="fresh">@string/setting_theme_fresh</item>
+        <item name="darksky">@string/setting_theme_darksky</item>
+        <item name="clearsky">@string/setting_theme_clearsky</item>
+        <item name="clearblue">@string/setting_theme_clearblue</item>
         <item name="classic">@string/setting_theme_classic</item>
+        <item name="clover">@string/setting_theme_clover</item>
         <item name="dark">@string/setting_theme_dark</item>
         <item name="classicdark">@string/setting_theme_classic_dark</item>
     </string-array>
     <string-array name="themesValues">
-        <item name="fresh">fresh</item>
+        <item name="darksky">darksky</item>
+        <item name="clearsky">clearsky</item>
+        <item name="clearblue">clearblue</item>
         <item name="classic">classic</item>
+        <item name="clover">clover</item>
         <item name="dark">dark</item>
         <item name="classicdark">classicdark</item>
     </string-array>
+
 </resources>

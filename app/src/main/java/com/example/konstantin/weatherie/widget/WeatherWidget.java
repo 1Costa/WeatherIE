@@ -2,20 +2,16 @@ package com.example.konstantin.weatherie.widget;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.widget.ImageView;
 import android.widget.RemoteViews;
 
-import com.example.konstantin.weatherie.MainActivity;
+import com.example.konstantin.weatherie.activities.MainActivity;
 import com.example.konstantin.weatherie.R;
 import com.example.konstantin.weatherie.helpers.Updater;
 import com.example.konstantin.weatherie.model.Weather;
-
-import java.text.DateFormat;
 
 /**
  * Implementation of App Widget functionality.

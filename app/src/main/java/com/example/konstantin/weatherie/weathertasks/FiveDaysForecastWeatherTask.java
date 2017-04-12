@@ -3,9 +3,7 @@ package com.example.konstantin.weatherie.weathertasks;
 import android.app.ProgressDialog;
 import android.content.Context;
 
-import com.example.konstantin.weatherie.MainActivity;
-import com.example.konstantin.weatherie.weathertasks.ParseResult;
-import com.example.konstantin.weatherie.weathertasks.WeatherRequestTask;
+import com.example.konstantin.weatherie.activities.MainActivity;
 
 /**
  * Created by Konstantin on 19/02/2017.

@@ -1,9 +1,13 @@
 package com.example.konstantin.weatherie.WorldMap;
 
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.AdapterView;
@@ -25,19 +29,33 @@ import com.google.android.gms.maps.model.UrlTileProvider;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class WorldMapActivity extends FragmentActivity{ // implements OnMapReadyCallback {
+public class WorldMapActivity extends AppCompatActivity{ // implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private static String OWM_TILE_URL = "http://tile.openweathermap.org/map/%s/%d/%d/%d.png";
     private Spinner spinner;
     private String tileType = "clouds";
     private TileOverlay tileOver;
+    private int theme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        setTheme(theme = getTheme(prefs.getString("theme", "darksky")));
+        boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky ||
+                theme == R.style.AppTheme_NoActionBar_Dark ||
+                theme == R.style.AppTheme_NoActionBar_Classic_Dark;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_world_map);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.map_toolbar);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (darkTheme) {
+            toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
+        }
+
 
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         String apiKey = sp.getString("apiKey", getResources().getString(R.string.apiKey));
@@ -98,6 +116,17 @@ public class WorldMapActivity extends FragmentActivity{ // implements OnMapReady
         });
     }
 
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -137,5 +166,25 @@ public class WorldMapActivity extends FragmentActivity{ // implements OnMapReady
 
         return tileProvider;
     }
+
+    private int getTheme(String themePref) {
+        switch (themePref) {
+            case "clearblue":
+                return R.style.AppTheme_NoActionBar;
+            case "dark":
+                return R.style.AppTheme_NoActionBar_Dark;
+            case "classic":
+                return R.style.AppTheme_NoActionBar_Classic;
+            case "classicdark":
+                return R.style.AppTheme_NoActionBar_Classic_Dark;
+            case "clearsky":
+                return R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky;
+            case "clover":
+                return R.style.AppTheme_NoActionBar_Classic_Dark_Clover;
+            default:
+                return R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky;
+        }
+    }
+
 
 }

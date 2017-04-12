@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.activities;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -11,12 +11,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.example.konstantin.weatherie.adapters.RecyclerViewFiveDaysFragment;
+import com.example.konstantin.weatherie.R;
+import com.example.konstantin.weatherie.fragments.RecyclerViewFiveDaysFragment;
 import com.example.konstantin.weatherie.adapters.ViewPagerAdapter;
 import com.example.konstantin.weatherie.adapters.WeatherRecyclerAdapter;
 import com.example.konstantin.weatherie.helpers.MesurmentsConvertor;
@@ -42,8 +44,10 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
     ViewPager viewPager;
     TabLayout tabLayout;
     String image;
-    //Typeface weatherFont;
     TextView icon;
+    View appView;
+    ImageView imageBackgroundFive;
+    ImageView tintedOverBackgroundFive;
     private static Map<String, Integer> speedUnits = new HashMap<>(3);
     private static Map<String, Integer> pressUnits = new HashMap<>(3);
     int theme;
@@ -52,9 +56,12 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
         // Initialize the associated SharedPreferences file with default values
         PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
+        setTheme(theme = getTheme(prefs.getString("theme", "darksky")));
         boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark ||
                 theme == R.style.AppTheme_NoActionBar_Classic_Dark;
+        boolean clearsky = theme == R.style.AppTheme_NoActionBar_Classic_Dark_ClearSky;
+        boolean darksky = theme == R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky;
+        boolean clover = theme == R.style.AppTheme_NoActionBar_Classic_Dark_Clover;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_five_days_forecast);
 
@@ -64,23 +71,47 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
         fiveDaysListView = (ListView)findViewById(R.id.fiveDaysListView);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
+        imageBackgroundFive = (ImageView)findViewById(R.id.imageBackgroundFive) ;
+        tintedOverBackgroundFive = (ImageView)findViewById(R.id.tintedOverBackgroundFive) ;
 
         longTermWeather = (ArrayList<Weather>) getIntent().getSerializableExtra("forecastDetailed");
         fiveDaysWeather = (ArrayList<Weather>) getIntent().getSerializableExtra("forecastFiveDays");
         city = getIntent().getStringExtra("city");
         country = getIntent().getStringExtra("country");
+        if (darkTheme) {
+            toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
+        }
+        if (clearsky) {
+            imageBackgroundFive.setBackgroundResource(R.drawable.clear_sky);
+            tintedOverBackgroundFive.setBackgroundResource(R.color.clearsky_tintedColorOverImageBackground);
+        }
+        if (darksky) {
+            imageBackgroundFive.setBackgroundResource(R.drawable.dark_sky);
+            tintedOverBackgroundFive.setBackgroundResource(R.color.darksky_tintedColorOverImageBackground);
+        }
+        if (clover) {
+            imageBackgroundFive.setBackgroundResource(R.drawable.clover);
+            tintedOverBackgroundFive.setBackgroundResource(R.color.clover_tintedColorOverImageBackground);
+
+        }
         updateLongTermWeatherUI();
     }
     private int getTheme(String PreferedApplicationTheme) {
         switch (PreferedApplicationTheme) {
+            case "clearblue":
+                return R.style.AppTheme_NoActionBar;
             case "dark":
                 return R.style.AppTheme_NoActionBar_Dark;
             case "classic":
                 return R.style.AppTheme_NoActionBar_Classic;
             case "classicdark":
                 return R.style.AppTheme_NoActionBar_Classic_Dark;
+            case "clearsky":
+                return R.style.AppTheme_NoActionBar_Classic_Dark_ClearSky;
+            case "clover":
+                return R.style.AppTheme_NoActionBar_Classic_Dark_Clover;
             default:
-                return R.style.AppTheme_NoActionBar;
+                return R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky;
         }
     }
 
@@ -102,12 +133,12 @@ public class FiveDaysForecastActivity extends AppCompatActivity {
             //Day of the week and short date
             Date fullDate = item.getDate();
             SimpleDateFormat dayFormat = new SimpleDateFormat("EEEE", Locale.ENGLISH);
-            SimpleDateFormat shortDateFormat = new SimpleDateFormat("MMMM-dd", Locale.ENGLISH);
+            SimpleDateFormat shortDateFormat = new SimpleDateFormat("MMMM/dd", Locale.ENGLISH);
             String day = dayFormat.format(fullDate);
             String dateShort = shortDateFormat.format(fullDate);
             // Week Day
             map.put("day", day);
-            //Day date short  e.g. March-01
+            //Day date short  e.g. March/01
             map.put("dateShort", dateShort);
             //forecast conditions description
             map.put("description", item.getDescription());

@@ -1,11 +1,13 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.activities;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +19,7 @@ import com.db.chart.model.LineSet;
 import com.db.chart.view.ChartView;
 import com.db.chart.view.LineChartView;
 
+import com.example.konstantin.weatherie.R;
 import com.example.konstantin.weatherie.helpers.MesurmentsConvertor;
 import com.example.konstantin.weatherie.model.Weather;
 import com.example.konstantin.weatherie.weathertasks.ParseResult;
@@ -34,6 +37,7 @@ public class GraphsActivity extends AppCompatActivity {
     SharedPreferences sp;
 
     int theme;
+    Context context;
 
     ArrayList<Weather> weatherGraphsData = new ArrayList<>();
 
@@ -41,14 +45,16 @@ public class GraphsActivity extends AppCompatActivity {
     float maxTemp = 0;
     float minRain = 100000;
     float maxRain = 0;
+    boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
-        boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark ||
+        setTheme(theme = getTheme(prefs.getString("theme", "darksky")));
+        darkTheme = theme == R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky ||
+                theme == R.style.AppTheme_NoActionBar_Classic_Dark_ClearSky ||
+                theme == R.style.AppTheme_NoActionBar_Dark ||
                 theme == R.style.AppTheme_NoActionBar_Classic_Dark;
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graphs);
 
@@ -58,7 +64,6 @@ public class GraphsActivity extends AppCompatActivity {
         if (darkTheme) {
             toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
         }
-
         sp = PreferenceManager.getDefaultSharedPreferences(GraphsActivity.this);
         String lastLongterm = sp.getString("lastLongterm", "");
 
@@ -67,6 +72,18 @@ public class GraphsActivity extends AppCompatActivity {
             rainGraph();
         } else {
             Snackbar.make(findViewById(android.R.id.content), R.string.msg_err_parsing_json, Snackbar.LENGTH_LONG).show();
+        }
+    }
+
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -111,7 +128,11 @@ public class GraphsActivity extends AppCompatActivity {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(true);
-        paint.setColor(Color.parseColor("#070707"));
+        if (darkTheme) {
+            paint.setColor(Color.parseColor("#f7f4f4"));
+        }else {
+            paint.setColor(Color.parseColor("#2b0808"));
+        }
         paint.setPathEffect(new DashPathEffect(new float[]{10, 10}, 0)); // the best hyphen length is 10
         paint.setStrokeWidth(2);
         lineChartView.setGrid(ChartView.GridType.FULL, paint);
@@ -120,6 +141,11 @@ public class GraphsActivity extends AppCompatActivity {
         lineChartView.setStep(2);
         lineChartView.setXAxis(false);
         lineChartView.setYAxis(false);
+        if (darkTheme) {
+            lineChartView.setLabelsColor(Color.parseColor("#effff7"));
+        }else {
+            lineChartView.setLabelsColor(Color.parseColor("#002613"));
+        }
 
         lineChartView.show();
     }
@@ -152,15 +178,24 @@ public class GraphsActivity extends AppCompatActivity {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setAntiAlias(true);
-        paint.setColor(Color.parseColor("#333333"));
+        if (darkTheme) {
+            paint.setColor(Color.parseColor("#f7f4f4"));
+        }else {
+            paint.setColor(Color.parseColor("#2b0808"));
+        }
         paint.setPathEffect(new DashPathEffect(new float[]{10, 10}, 0));
-        paint.setStrokeWidth(1);
+        paint.setStrokeWidth(2);
         lineChartView.setGrid(ChartView.GridType.HORIZONTAL, paint);
         lineChartView.setBorderSpacing(Tools.fromDpToPx(10));
         lineChartView.setAxisBorderValues((int) minRain - 1, (int) maxRain + 2);
         lineChartView.setStep(1);
         lineChartView.setXAxis(false);
         lineChartView.setYAxis(false);
+        if (darkTheme) {
+            lineChartView.setLabelsColor(Color.parseColor("#effff7"));
+        }else {
+            lineChartView.setLabelsColor(Color.parseColor("#002613"));
+        }
 
         lineChartView.show();
     }
@@ -224,14 +259,20 @@ public class GraphsActivity extends AppCompatActivity {
 
     private int getTheme(String themePref) {
         switch (themePref) {
+            case "clearblue":
+                return R.style.AppTheme_NoActionBar;
             case "dark":
                 return R.style.AppTheme_NoActionBar_Dark;
             case "classic":
                 return R.style.AppTheme_NoActionBar_Classic;
             case "classicdark":
                 return R.style.AppTheme_NoActionBar_Classic_Dark;
+            case "clearsky":
+                return R.style.AppTheme_NoActionBar_Classic_Dark_ClearSky;
+            case "clover":
+                return R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky;
             default:
-                return R.style.AppTheme_NoActionBar;
+                return R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky;
         }
     }
 }

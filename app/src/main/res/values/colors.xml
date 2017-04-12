@@ -23,7 +23,27 @@
     <color name="classic_darkTheme_colorBackground">#303030</color>
     <color name="classic_darkTheme_colorTintedBackground">#263238</color>
 
-    <!--<attr name="colorBackground" format="color" />-->
-    <!--<attr name="colorTintedBackground" format="color" />-->
-    <!--<attr name="picture" format="reference"/>-->
+    <color name="classic_darkTheme_clearsky_colorPrimary">@android:color/transparent</color>
+    <color name="classic_darkTheme_clearsky_colorPrimaryDark">#025fa7</color>
+    <color name="classic_darkTheme_clearsky_colorAccent">#027feb</color>
+    <color name="classic_darkTheme_clearsky_colorBackground">#bcb9b9</color>
+    <color name="classic_darkTheme_clearsky_colorTintedBackground">#0e64af</color>
+
+    <color name="classic_darkTheme_clover_colorPrimary">@android:color/transparent</color>
+    <color name="classic_darkTheme_clover_colorPrimaryDark">#048802</color>
+    <color name="classic_darkTheme_clover_colorAccent">#60bc60</color>
+    <color name="classic_darkTheme_clover_colorBackground">#bcb9b9</color>
+    <color name="classic_darkTheme_clover_colorTintedBackground">#8cef9e</color>
+
+    <color name="classic_darkTheme_darksky_colorPrimary">@android:color/transparent</color>
+    <color name="classic_darkTheme_darksky_colorPrimaryDark">#000000</color>
+    <color name="classic_darkTheme_darksky_colorAccent">#0a9de7</color>
+    <color name="classic_darkTheme_darksky_colorBackground">#a0a8ad</color>
+    <color name="classic_darkTheme_darksky_colorTintedBackground">#a0a8ad</color>
+
+
+    <color name="clearsky_tintedColorOverImageBackground">#4a000000</color>
+    <color name="darksky_tintedColorOverImageBackground">#3c000000</color>
+    <color name="clover_tintedColorOverImageBackground">#8d000000</color>
+
 </resources>

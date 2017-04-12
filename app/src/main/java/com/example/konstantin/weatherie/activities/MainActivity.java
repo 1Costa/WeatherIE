@@ -1,4 +1,4 @@
-package com.example.konstantin.weatherie;
+package com.example.konstantin.weatherie.activities;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -7,9 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -24,8 +22,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableString;
-import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -39,9 +35,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.konstantin.weatherie.R;
 import com.example.konstantin.weatherie.WorldMap.WorldMapActivity;
 import com.example.konstantin.weatherie.adapters.PlacesAutoCompleteAdapter;
-import com.example.konstantin.weatherie.adapters.RecyclerViewFragment;
+import com.example.konstantin.weatherie.fragments.RecyclerViewFragment;
 import com.example.konstantin.weatherie.adapters.ViewPagerAdapter;
 import com.example.konstantin.weatherie.adapters.WeatherRecyclerAdapter;
 import com.example.konstantin.weatherie.helpers.MesurmentsConvertor;
@@ -79,20 +76,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     final NetworkConnectionCheck net = new NetworkConnectionCheck(MainActivity.this) ; //check if a phone has internet access
     protected static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION = 1;
-
     // Time in milliseconds; only reload weather if last update is longer ago than this value
     private static final int NO_UPDATE_REQUIRED_THRESHOLD = 300000;
 
     private static Map<String, Integer> speedUnits = new HashMap<>(3);
     private static Map<String, Integer> pressUnits = new HashMap<>(3);
-    private static boolean mappingsInitialised = false;
-
-    Typeface weatherFont;
     Weather todayWeather = new Weather();
     private List<Weather> longTermTodayWeather = new ArrayList<>();
     private List<Weather> longTermWeather = new ArrayList<>();
     private List<Weather> fiveDaysForecastWeather = new ArrayList<>();
-    private List<Weather> longTermTomorrowWeather = new ArrayList<>();
 
     Button forecast;
     TextView todayCity;
@@ -110,6 +102,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     ViewPager viewPager;
     TabLayout tabLayout;
     View appView;
+    ImageView imageBackground;
+    ImageView tintedOverBackground;
 
     public String recentCity = "";
 
@@ -124,9 +118,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         // Initialize the associated SharedPreferences file with default values
         PreferenceManager.setDefaultValues(this, R.xml.prefs, false);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        setTheme(theme = getTheme(prefs.getString("theme", "fresh")));
+        setTheme(theme = getTheme(prefs.getString("theme", "darksky")));
         boolean darkTheme = theme == R.style.AppTheme_NoActionBar_Dark ||
                 theme == R.style.AppTheme_NoActionBar_Classic_Dark;
+        boolean clearsky = theme == R.style.AppTheme_NoActionBar_Classic_Dark_ClearSky;
+        boolean darksky = theme == R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky;
+        boolean clover = theme == R.style.AppTheme_NoActionBar_Classic_Dark_Clover;
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -150,15 +147,31 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         todaySunrise = (TextView) findViewById(R.id.todaySunrise);
         todaySunset = (TextView) findViewById(R.id.todaySunset);
         appView = findViewById(R.id.activity_main);
+        imageBackground = (ImageView)findViewById(R.id.imageBackground) ;
+        tintedOverBackground = (ImageView)findViewById(R.id.tintedOverBackground) ;
 // Initialize viewPager
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         tabLayout = (TabLayout) findViewById(R.id.tabs);
-        weatherFont = Typeface.createFromAsset(this.getAssets(), "fonts/weather.ttf");
 
         progressDialog = new ProgressDialog(MainActivity.this);
 
         if (darkTheme) {
             toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark);
+        }
+        if (clearsky) {
+            toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark_ClearSky);
+            imageBackground.setBackgroundResource(R.drawable.clear_sky);
+            tintedOverBackground.setBackgroundResource(R.color.clearsky_tintedColorOverImageBackground);
+        }
+        if (darksky) {
+            toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark_DarkSky);
+            imageBackground.setBackgroundResource(R.drawable.dark_sky);
+            tintedOverBackground.setBackgroundResource(R.color.darksky_tintedColorOverImageBackground);
+        }
+        if (clover) {
+            toolbar.setPopupTheme(R.style.AppTheme_PopupOverlay_Dark_Clover);
+            imageBackground.setBackgroundResource(R.drawable.clover);
+            tintedOverBackground.setBackgroundResource(R.color.clover_tintedColorOverImageBackground);
         }
         preloadWeather();
         updateLastUpdateTime();
@@ -185,29 +198,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     private int getTheme(String PreferedApplicationTheme) {
         switch (PreferedApplicationTheme) {
+            case "clearblue":
+                return R.style.AppTheme_NoActionBar;
             case "dark":
                 return R.style.AppTheme_NoActionBar_Dark;
             case "classic":
                 return R.style.AppTheme_NoActionBar_Classic;
             case "classicdark":
                 return R.style.AppTheme_NoActionBar_Classic_Dark;
+            case "clearsky":
+                return R.style.AppTheme_NoActionBar_Classic_Dark_ClearSky;
+            case "clover":
+                return R.style.AppTheme_NoActionBar_Classic_Dark_Clover;
             default:
-                return R.style.AppTheme_NoActionBar;
+                return R.style.AppTheme_NoActionBar_Classic_Dark_DarkSky;
         }
     }
-
-    //    private int getTheme(String PreferedApplicationTheme) {
-//        switch (PreferedApplicationTheme) {
-//            case "dark":
-//                return R.style.AppTheme_Dark;
-//            case "classic":
-//                return R.style.AppTheme_Classic;
-//            case "classicdark":
-//                return R.style.AppTheme_Classic_Dark;
-//            default:
-//                return R.style.AppTheme;
-//        }
-//    }
 
     private boolean shouldUpdate() {
         long lastUpdate = PreferenceManager.getDefaultSharedPreferences(this).getLong("lastUpdate", -1);
@@ -229,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         if (id == R.id.action_refresh) {
             if (net.isNetworkAvailable()) {
                 getTodayWeather();
-                getFiveDaysWeather();
+                //getFiveDaysWeather();
                 getLongTermWeather();
             } else {
                 Snackbar.make(appView, getString(R.string.msg_connection_not_available), Snackbar.LENGTH_LONG).show();
@@ -379,8 +385,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
-                // Explanation not needed, since user requests this himself
-
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_ACCESS_FINE_LOCATION);
             } else {
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -603,7 +610,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         todaySunrise.setText(getString(R.string.sunrise) + ": " + timeFormat.format(todayWeather.getSunrise()));
         todaySunset.setText(getString(R.string.sunset) + ": " + timeFormat.format(todayWeather.getSunset()));
         weatherIcon.setImageResource(Integer.parseInt(todayWeather.getIcon()));
-        //todayIcon.setText(todayWeather.getIcon());
     }
 
     private String localize(SharedPreferences sp, String preferenceKey, String defaultValueKey) {
@@ -920,8 +926,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         WeatherRecyclerAdapter weatherRecyclerAdapter;
         if (id == 0) {
             weatherRecyclerAdapter = new WeatherRecyclerAdapter(this, longTermTodayWeather);
-        } else if (id == 1) {
-            weatherRecyclerAdapter = new WeatherRecyclerAdapter(this, longTermTomorrowWeather);
+//        } else if (id == 1) {
+//            weatherRecyclerAdapter = new WeatherRecyclerAdapter(this, longTermTomorrowWeather);
         } else {
             weatherRecyclerAdapter = new WeatherRecyclerAdapter(this, longTermWeather);
         }

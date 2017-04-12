@@ -37,6 +37,34 @@
         <item name="android:textColorPrimary">@android:color/white</item>
     </style>
 
+    <style name="AppTheme.Classic.Dark.DarkSky" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/classic_darkTheme_darksky_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/classic_darkTheme_darksky_colorPrimaryDark</item>
+        <item name="colorAccent">@color/classic_darkTheme_darksky_colorAccent</item>
+        <item name="colorBackground">@color/classic_darkTheme_darksky_colorBackground</item>
+        <item name="colorTintedBackground">@color/classic_darkTheme_darksky_colorTintedBackground</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme.Classic.Dark.Clover" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/classic_darkTheme_clover_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/classic_darkTheme_clover_colorPrimaryDark</item>
+        <item name="colorAccent">@color/classic_darkTheme_clover_colorAccent</item>
+        <item name="colorBackground">@color/classic_darkTheme_clover_colorPrimary</item>
+        <item name="colorTintedBackground">@color/classic_darkTheme_clover_colorTintedBackground</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+
+    <style name="AppTheme.Classic.Dark.ClearSky" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/classic_darkTheme_clearsky_colorPrimary</item>
+        <item name="colorPrimaryDark">@color/classic_darkTheme_clearsky_colorPrimaryDark</item>
+        <item name="colorAccent">@color/classic_darkTheme_clearsky_colorAccent</item>
+        <item name="colorBackground">@color/classic_darkTheme_clearsky_colorBackground</item>
+        <item name="colorTintedBackground">@color/classic_darkTheme_clearsky_colorTintedBackground</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
     <style name="AppTheme.NoStatusBar" parent="AppTheme.NoActionBar"></style>
 
     <style name="AppTheme.NoActionBar" parent="AppTheme">
@@ -59,10 +87,31 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.NoActionBar.Classic.Dark.ClearSky" parent="AppTheme.Classic.Dark.ClearSky">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.Classic.Dark.DarkSky" parent="AppTheme.Classic.Dark.DarkSky">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar.Classic.Dark.Clover" parent="AppTheme.Classic.Dark.Clover">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="AppTheme.PopupOverlay.Dark" parent="ThemeOverlay.AppCompat" />
+
+    <style name="AppTheme.PopupOverlay.Dark_ClearSky" parent="ThemeOverlay.AppCompat" />
+
+    <style name="AppTheme.PopupOverlay.Dark_DarkSky" parent="ThemeOverlay.AppCompat" />
+
+    <style name="AppTheme.PopupOverlay.Dark_Clover" parent="ThemeOverlay.AppCompat.Dark" />
 
 </resources>
